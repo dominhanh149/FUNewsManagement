@@ -1,0 +1,93 @@
+﻿@{
+    ViewData["Title"] = "Accounts";
+}
+
+<h3 class="mb-3">Account Management (Admin)</h3>
+
+<div class="row g-2 mb-3">
+    <div class="col-md-5">
+        <input id="keyword" class="form-control" placeholder="Search name/email..." />
+    </div>
+    <div class="col-md-3">
+        <select id="role" class="form-select">
+            <option value="">All roles</option>
+            <option value="1">Staff</option>
+            <option value="2">Lecturer</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button id="btnSearch" class="btn btn-primary w-100">Search</button>
+    </div>
+    <div class="col-md-2">
+        <button id="btnCreate" class="btn btn-success w-100">Create</button>
+    </div>
+</div>
+
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th style="width:80px;">ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th style="width:120px;">Role</th>
+            <th style="width:160px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody id="tbAccounts"></tbody>
+</table>
+
+<div class="d-flex justify-content-between align-items-center">
+    <div id="pagingInfo" class="text-muted"></div>
+    <div class="d-flex gap-2">
+        <button id="btnPrev" class="btn btn-outline-secondary btn-sm">Prev</button>
+        <button id="btnNext" class="btn btn-outline-secondary btn-sm">Next</button>
+    </div>
+</div>
+
+<!-- Modal Create/Update -->
+<div class="modal fade" id="accountModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Account</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="accountId" />
+
+                <div class="mb-2">
+                    <label class="form-label">Name</label>
+                    <input id="accountName" class="form-control" />
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">Email</label>
+                    <input id="accountEmail" class="form-control" />
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">Role</label>
+                    <select id="accountRole" class="form-select">
+                        <option value="1">Staff</option>
+                        <option value="2">Lecturer</option>
+                    </select>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">Password <span class="text-muted">(required when create)</span></label>
+                    <input id="accountPassword" type="password" class="form-control" />
+                </div>
+
+                <div id="modalMsg" class="text-danger mt-2"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="btnSave" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin.accounts.js"></script>
+}

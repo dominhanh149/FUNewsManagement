@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Reports";
+}
+
+<h3 class="mb-3">News Report (Admin)</h3>
+
+<div class="row g-2 mb-3">
+    <div class="col-md-3">
+        <label class="form-label">FromDate</label>
+        <input id="fromDate" type="date" class="form-control" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">ToDate</label>
+        <input id="toDate" type="date" class="form-control" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">CategoryId</label>
+        <input id="categoryId" type="number" min="0" class="form-control" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">AuthorId</label>
+        <input id="authorId" type="number" min="0" class="form-control" />
+    </div>
+</div>
+
+<button id="btnRun" class="btn btn-primary mb-3">Run report</button>
+
+<div id="summary" class="mb-3"></div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h5>By Category</h5>
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Total</th>
+                    <th>Active</th>
+                    <th>Inactive</th>
+                </tr>
+            </thead>
+            <tbody id="tbCategory"></tbody>
+        </table>
+    </div>
+
+    <div class="col-md-6">
+        <h5>By Author</h5>
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr>
+                    <th>Author</th>
+                    <th>Total</th>
+                    <th>Active</th>
+                    <th>Inactive</th>
+                </tr>
+            </thead>
+            <tbody id="tbAuthor"></tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin.reports.js"></script>
+}

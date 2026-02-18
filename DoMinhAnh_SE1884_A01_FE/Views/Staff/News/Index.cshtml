@@ -1,0 +1,121 @@
+﻿@{
+    ViewData["Title"] = "News Management";
+}
+
+<h3 class="mb-3">News Management (Staff)</h3>
+
+<div class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input id="keyword" class="form-control" placeholder="Search title..." />
+    </div>
+    <div class="col-md-2">
+        <button id="btnSearch" class="btn btn-primary w-100">Search</button>
+    </div>
+    <div class="col-md-2">
+        <button id="btnCreate" class="btn btn-success w-100">Create</button>
+    </div>
+</div>
+
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th style="width:120px;">ID</th>
+            <th style="width:220px;">Title</th>
+            <th style="width:220px;">Headline</th>
+            <th style="width:160px;">Source</th>
+            <th style="width:160px;">Category</th>
+            <th style="width:110px;">Status</th>
+            <th style="width:280px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody id="tbNews"></tbody>
+</table>
+<div class="d-flex justify-content-between align-items-center mt-2">
+    <div id="newsPagingInfo" class="text-muted"></div>
+
+    <div class="d-flex gap-2">
+        <button id="btnNewsPrev" class="btn btn-outline-secondary btn-sm">Prev</button>
+        <button id="btnNewsNext" class="btn btn-outline-secondary btn-sm">Next</button>
+    </div>
+</div>
+
+<!-- Modal Create/Edit -->
+<div class="modal fade" id="newsModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">News</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="newsId" />
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Title</label>
+                        <input id="newsTitle" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Headline</label>
+                        <input id="headline" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">News Source</label>
+                        <input id="newsSource" class="form-control" placeholder="e.g. FUNews, Website, Facebook..." />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Category</label>
+                        <select id="categoryId" class="form-select"></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Content</label>
+                        <textarea id="content" class="form-control" rows="6"></textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Tags</label>
+                        <div id="tagList" class="d-flex flex-wrap gap-2"></div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="isActive" checked />
+                            <label class="form-check-label">Active</label>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div id="modalMsg" class="text-danger"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="btnSave" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/staff.news.js"></script>
+
+    <style>
+        /* Giữ bảng gọn: cắt text dài + hover để xem đầy đủ */
+        .ellipsis {
+            max-width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .content-preview {
+            max-width: 520px;
+        }
+    </style>
+}

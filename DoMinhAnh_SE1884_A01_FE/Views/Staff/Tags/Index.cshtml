@@ -1,0 +1,101 @@
+﻿@{
+    ViewData["Title"] = "Tags";
+}
+
+<h3 class="mb-3">Tag Management (Staff)</h3>
+
+<div class="row g-2 mb-3">
+    <div class="col-md-6">
+        <input id="keyword" class="form-control" placeholder="Search tag name..." />
+    </div>
+    <div class="col-md-2">
+        <button id="btnSearch" class="btn btn-primary w-100">Search</button>
+    </div>
+    <div class="col-md-2">
+        <button id="btnCreate" class="btn btn-success w-100">Create</button>
+    </div>
+</div>
+
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th style="width:80px;">ID</th>
+            <th>Name</th>
+            <th>Note</th>
+            <th style="width:120px;">Articles</th>
+            <th style="width:220px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody id="tbTags"></tbody>
+</table>
+
+<div class="d-flex justify-content-between align-items-center">
+    <div id="pagingInfo" class="text-muted"></div>
+    <div class="d-flex gap-2">
+        <button id="btnPrev" class="btn btn-outline-secondary btn-sm">Prev</button>
+        <button id="btnNext" class="btn btn-outline-secondary btn-sm">Next</button>
+    </div>
+</div>
+
+<!-- Modal Create/Edit -->
+<div class="modal fade" id="tagModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Tag</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="tagId" />
+
+                <div class="mb-2">
+                    <label class="form-label">Tag Name *</label>
+                    <input id="tagName" class="form-control" />
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">Note</label>
+                    <textarea id="tagNote" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div id="modalMsg" class="text-danger mt-2"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="btnSave" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Articles by Tag -->
+<div class="modal fade" id="articlesModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Articles using this Tag</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ArticleId</th>
+                            <th>Title</th>
+                            <th>CreatedDate</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbArticles"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/staff.tags.js"></script>
+}

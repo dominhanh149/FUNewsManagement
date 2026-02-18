@@ -1,0 +1,84 @@
+﻿@{
+    ViewData["Title"] = "Categories";
+}
+
+<h3 class="mb-3">Category Management (Staff)</h3>
+
+<div class="row g-2 mb-3">
+    <div class="col-md-6">
+        <input id="keyword" class="form-control" placeholder="Search name/description..." />
+    </div>
+    <div class="col-md-2">
+        <button id="btnSearch" class="btn btn-primary w-100">Search</button>
+    </div>
+    <div class="col-md-2">
+        <button id="btnCreate" class="btn btn-success w-100">Create</button>
+    </div>
+</div>
+
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th style="width:80px;">ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th style="width:110px;">Active</th>
+            <th style="width:110px;">Articles</th>
+            <th style="width:190px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody id="tbCategories"></tbody>
+</table>
+
+<div class="d-flex justify-content-between align-items-center">
+    <div id="pagingInfo" class="text-muted"></div>
+    <div class="d-flex gap-2">
+        <button id="btnPrev" class="btn btn-outline-secondary btn-sm">Prev</button>
+        <button id="btnNext" class="btn btn-outline-secondary btn-sm">Next</button>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="categoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="categoryId" />
+
+                <div class="mb-2">
+                    <label class="form-label">Category Name *</label>
+                    <input id="categoryName" class="form-control" />
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">Category Description *</label>
+                    <textarea id="categoryDesc" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">ParentCategoryID (optional)</label>
+                    <input id="parentId" type="number" class="form-control" min="0" step="1" />
+                </div>
+
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="isActive" checked>
+                    <label class="form-check-label" for="isActive">Active</label>
+                </div>
+
+                <div id="modalMsg" class="text-danger mt-2"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="btnSave" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/staff.categories.js"></script>
+}
