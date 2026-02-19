@@ -15,11 +15,22 @@ namespace Assignmen_PRN232_1.Controllers.Api
     {
         private readonly ITagService _tagService;
         private readonly ILogger<TagController> _logger;
+        private readonly Assignmen_PRN232__.Models.AppDbContext _db;
 
-        public TagController(ITagService tagService, ILogger<TagController> logger)
+        public TagController(ITagService tagService, ILogger<TagController> logger, Assignmen_PRN232__.Models.AppDbContext db)
         {
             _tagService = tagService ?? throw new ArgumentNullException(nameof(tagService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _db = db;
+        }
+
+        [HttpGet]
+        [Microsoft.AspNetCore.OData.Query.EnableQuery]
+        [Route("/odata/Tags")]
+        [AllowAnonymous]
+        public IQueryable<Assignmen_PRN232__.Models.Tag> GetOData()
+        {
+            return _db.Tags.AsQueryable();
         }
 
         #region CRUD Operations

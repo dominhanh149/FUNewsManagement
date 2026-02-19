@@ -26,6 +26,15 @@ namespace Assignmen_PRN232_1.Controllers
             _db = db;
             _hub = hub;
         }
+
+        [HttpGet]
+        [Microsoft.AspNetCore.OData.Query.EnableQuery]
+        [Route("/odata/NewsArticles")]
+        [AllowAnonymous]
+        public IQueryable<NewsArticle> GetOData()
+        {
+            return _db.NewsArticles.AsQueryable();
+        }
         [HttpGet]
         public async Task<IActionResult> GetListPaging([FromQuery] NewsArticleSearchDto dto)
         {

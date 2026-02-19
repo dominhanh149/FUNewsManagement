@@ -7,13 +7,28 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UsersApp.Extensions;
+using Microsoft.AspNetCore.OData;
 
 var builder = WebApplication.CreateBuilder(args);
 var jwt = builder.Configuration.GetSection("JwtSettings");
 var key = Encoding.UTF8.GetBytes(jwt["Key"]!);
 
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddOData(opt =>
+{
+    opt.Select().Filter().OrderBy().Expand().Count().SetMaxTop(100);
+    opt.AddRouteComponents("odata", GetEdmModel());
+});
+
+static Microsoft.OData.Edm.IEdmModel GetEdmModel()
+{
+    var odataBuilder = new Microsoft.OData.ModelBuilder.ODataConventionModelBuilder();
+    odataBuilder.EntitySet<NewsArticle>("NewsArticles").EntityType.HasKey(x => x.NewsArticleId);
+    odataBuilder.EntitySet<Category>("Categories").EntityType.HasKey(x => x.CategoryId);
+    odataBuilder.EntitySet<Tag>("Tags").EntityType.HasKey(x => x.TagId);
+    odataBuilder.EntitySet<SystemAccount>("SystemAccounts").EntityType.HasKey(x => x.AccountId);
+    return odataBuilder.GetEdmModel();
+}
 
 builder.Services.AddHttpContextAccessor();
 

@@ -12,13 +12,25 @@ namespace Assignmen_PRN232_1.Controllers.Api
     {
         private readonly ICategoryService _categoryService;
         private readonly ILogger<CategoryController> _logger;
+        private readonly Assignmen_PRN232__.Models.AppDbContext _db;
 
         public CategoryController(
             ICategoryService categoryService,
-            ILogger<CategoryController> logger)
+            ILogger<CategoryController> logger,
+            Assignmen_PRN232__.Models.AppDbContext db)
         {
             _categoryService = categoryService;
             _logger = logger;
+            _db = db;
+        }
+
+        [HttpGet]
+        [Microsoft.AspNetCore.OData.Query.EnableQuery]
+        [Route("/odata/Categories")]
+        [AllowAnonymous]
+        public IQueryable<Assignmen_PRN232__.Models.Category> GetOData()
+        {
+            return _db.Categories.AsQueryable();
         }
 
         /// <summary>

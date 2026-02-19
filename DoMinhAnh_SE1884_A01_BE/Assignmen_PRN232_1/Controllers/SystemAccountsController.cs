@@ -28,6 +28,14 @@ namespace Assignmen_PRN232_1.Controllers.Api
         }
 
         [HttpGet]
+        [Microsoft.AspNetCore.OData.Query.EnableQuery]
+        [Route("/odata/SystemAccounts")]
+        public IQueryable<SystemAccount> GetOData()
+        {
+            return _db.SystemAccounts.AsQueryable();
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetListPaging([FromQuery] SystemAccountSearchDto dto)
         {
             var result = await _service.GetListPagingAsync(dto);
