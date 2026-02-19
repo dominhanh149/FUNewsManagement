@@ -66,6 +66,37 @@ namespace Assignmen_PRN232_1.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// POST /api/NewsArticles/create-or-edit
+        /// Tạo mới nếu NewsArticleId rỗng, cập nhật nếu có ID.
+        /// </summary>
+        [HttpPost("create-or-edit")]
+        public async Task<IActionResult> CreateOrEdit([FromBody] NewsArticleSaveDto dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var isNew = string.IsNullOrWhiteSpace(dto.NewsArticleId);
+
+            if (isNew)
+                dto.CreatedById = GetCurrentUserId();
+            else
+            {
+                dto.UpdatedById = GetCurrentUserId();
+                dto.ModifiedDate = DateTime.UtcNow;
+            }
+
+            var result = await _service.CreateOrEditAsync(dto);
+
+            if (!result.Success)
+            {
+                if (result.Message?.Contains("not found", StringComparison.OrdinalIgnoreCase) == true)
+                    return NotFound(result);
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] NewsArticleSaveDto dto)
         {

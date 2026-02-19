@@ -193,6 +193,7 @@ function openCreate() {
 }
 
 window.editNews = async function (id) {
+    clearAiSuggestions();                                      // ← reset AI chips
     const res = await api.get(`/fe-api/staff/news/${id}`);
     const n = unwrap(res);
 
@@ -261,8 +262,100 @@ window.duplicateNews = async function (id) {
     await loadNews();
 };
 
+// ─── AI Tag Suggestion ────────────────────────────────────────────────────────
+
+// Gợi ý tags dựa trên nội dung bài (gọi AI API)
+window.suggestTags = async function () {
+    const content = (document.getElementById("content")?.value || "") +
+                    " " + (document.getElementById("newsTitle")?.value || "") +
+                    " " + (document.getElementById("headline")?.value || "");
+
+    if (content.trim().length < 10) {
+        document.getElementById("aiTagSuggestions").innerHTML =
+            `<small class="text-warning">Hãy nhập nội dung bài viết trước.</small>`;
+        return;
+    }
+
+    const btn = document.getElementById("btnSuggestTags");
+    const spinner = document.getElementById("suggestSpinner");
+    btn.disabled = true;
+    spinner.classList.remove("d-none");
+    document.getElementById("aiTagSuggestions").innerHTML =
+        `<small class="text-muted">Đang phân tích...</small>`;
+
+    try {
+        const res = await api.post("/fe-api/ai/suggest-tags", { content });
+        const tags = res?.data?.tags ?? res?.tags ?? [];
+
+        if (!tags.length) {
+            document.getElementById("aiTagSuggestions").innerHTML =
+                `<small class="text-muted">Không tìm thấy tag phù hợp.</small>`;
+            return;
+        }
+
+        // Render chips
+        document.getElementById("aiTagSuggestions").innerHTML = tags.map(t => {
+            const pct = Math.round((t.confidence ?? 0) * 100);
+            const color = pct >= 70 ? "#6c63ff" : pct >= 40 ? "#4facfe" : "#adb5bd";
+            return `
+              <span class="badge rounded-pill px-3 py-2 ai-tag-chip"
+                    data-tag="${t.tag}"
+                    style="background:${color};cursor:pointer;font-size:.82rem;
+                           border:2px solid transparent;transition:all .2s"
+                    title="${pct}% confidence"
+                    onclick="selectAiTag(this, '${t.tag}')">
+                  ${t.tag} <span style="opacity:.75;font-size:.7rem">${pct}%</span>
+              </span>`;
+        }).join("");
+
+    } catch (e) {
+        document.getElementById("aiTagSuggestions").innerHTML =
+            `<small class="text-danger">Lỗi: ${e.message}</small>`;
+    } finally {
+        btn.disabled = false;
+        spinner.classList.add("d-none");
+    }
+};
+
+// Khi click vào chip: tìm checkbox tag có tên tương ứng → check tự động
+window.selectAiTag = function (el, tagName) {
+    const name = tagName.toLowerCase().trim();
+
+    // Tìm checkbox trong tagList có label khớp (case-insensitive)
+    const labels = document.querySelectorAll("#tagList label");
+    let matched = false;
+
+    for (const label of labels) {
+        const labelText = label.textContent.trim().toLowerCase();
+        if (labelText.includes(name)) {
+            const cb = label.querySelector("input[type='checkbox']");
+            if (cb && !cb.checked) {
+                cb.checked = true;
+                label.style.background = "#e8f5e9";
+                label.style.borderColor = "#81c784";
+            }
+            matched = true;
+            break;
+        }
+    }
+
+    // Visual feedback trên chip
+    el.style.outline = "2px solid #fff";
+    el.style.opacity = matched ? "0.6" : "1";
+    el.title = matched ? "✓ Đã chọn" : "Tag này chưa có trong danh sách";
+
+    // Ghi nhận vào learning cache (fire & forget)
+    api.post("/fe-api/ai/learn", { selectedTags: [tagName] }).catch(() => {});
+};
+
+// Xoá gợi ý khi mở modal mới
+function clearAiSuggestions() {
+    const el = document.getElementById("aiTagSuggestions");
+    if (el) el.innerHTML = `<small class="text-muted">Nhập nội dung bài viết rồi nhấn "Gợi ý Tag".</small>`;
+}
+
 // Events
-document.getElementById("btnCreate").onclick = openCreate;
+document.getElementById("btnCreate").onclick = () => { clearAiSuggestions(); openCreate(); };
 document.getElementById("btnSave").onclick = saveNews;
 
 document.getElementById("btnSearch").onclick = () => {
@@ -283,3 +376,4 @@ document.getElementById("btnNewsNext")?.addEventListener("click", async () => {
 document.addEventListener("DOMContentLoaded", () => {
     loadNews();
 });
+

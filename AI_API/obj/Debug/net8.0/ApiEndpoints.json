@@ -1,5 +1,47 @@
 [
   {
+    "ContainingType": "AI_API.Controllers.AiController",
+    "Method": "GetCache",
+    "RelativePath": "api/ai/cache",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AI_API.Controllers.AiController",
+    "Method": "Learn",
+    "RelativePath": "api/ai/learn",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "AI_API.Models.LearnTagsRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AI_API.Controllers.AiController",
+    "Method": "SuggestTags",
+    "RelativePath": "api/ai/suggest-tags",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "AI_API.Models.SuggestTagsRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "AI_API.Controllers.WeatherForecastController",
     "Method": "Get",
     "RelativePath": "WeatherForecast",

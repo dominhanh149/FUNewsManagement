@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AI_API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1fe0da3794a8d4ba5be9de69e694a86f1d87c02b")]
 [assembly: System.Reflection.AssemblyProductAttribute("AI_API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AI_API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -81,6 +81,24 @@
                         <div id="tagList" class="d-flex flex-wrap gap-2"></div>
                     </div>
 
+                    <!-- ─── AI Tag Suggestion ──────────────────────────────── -->
+                    <div class="col-12">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <label class="form-label mb-0">💡 Gợi ý Tag từ nội dung</label>
+                            <button type="button" id="btnSuggestTags"
+                                    class="btn btn-sm btn-outline-primary"
+                                    onclick="suggestTags()">
+                                <span id="suggestSpinner" class="spinner-border spinner-border-sm d-none me-1" role="status"></span>
+                                Gợi ý Tag
+                            </button>
+                        </div>
+                        <!-- Chips kết quả gợi ý -->
+                        <div id="aiTagSuggestions" class="d-flex flex-wrap gap-2">
+                            <small class="text-muted">Nhập nội dung bài viết rồi nhấn "Gợi ý Tag".</small>
+                        </div>
+                    </div>
+                    <!-- ─────────────────────────────────────────────────────── -->
+
                     <div class="col-12">
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input" id="isActive" checked />
@@ -91,6 +109,7 @@
                     <div class="col-12">
                         <div id="modalMsg" class="text-danger"></div>
                     </div>
+
                 </div>
             </div>
 
