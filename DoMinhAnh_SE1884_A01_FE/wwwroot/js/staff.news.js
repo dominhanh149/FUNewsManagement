@@ -185,8 +185,9 @@ function openCreate() {
     document.getElementById("headline").value = "";
     document.getElementById("newsSource").value = "";
     document.getElementById("content").value = "";
+    document.getElementById("imgPreview").innerHTML = ""; // Clear preview
     document.getElementById("isActive").checked = true;
-
+    
     loadCategories();
     loadTags([]);
     modal.show();
@@ -207,6 +208,7 @@ window.editNews = async function (id) {
 
     const contentEl = document.getElementById("content");
     if (contentEl) contentEl.value = n.newsContent ?? n.NewsContent ?? "";
+    document.getElementById("imgPreview").innerHTML = ""; // Clear preview
 
     document.getElementById("isActive").checked = !!(n.newsStatus ?? n.NewsStatus);
 
@@ -361,6 +363,46 @@ document.getElementById("btnSave").onclick = saveNews;
 document.getElementById("btnSearch").onclick = () => {
     newsPageNumber = 1;
     loadNews();
+};
+
+// ─── Image Upload ─────────────────────────────────────────────────────────────
+document.getElementById("btnUploadImg").onclick = async function () {
+    const input = document.getElementById("imgUpload");
+    if (!input.files || !input.files.length) {
+        alert("Please select an image file first.");
+        return;
+    }
+    const file = input.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const btn = document.getElementById("btnUploadImg");
+    const oldText = btn.innerText;
+    btn.innerText = "Up...";
+    btn.disabled = true;
+
+    try {
+        const res = await api.post("/api/upload/image", formData);
+        const url = unwrap(res)?.url ?? res.url;
+        
+        if (url) {
+             const contentArea = document.getElementById("content");
+             contentArea.value += `\n![${file.name}](${url})\n`;
+             input.value = ""; 
+             
+             // Show preview
+             document.getElementById("imgPreview").innerHTML = 
+                `<img src="${url}" class="img-thumbnail" style="max-height:150px" title="Uploaded Image" />`;
+        } else {
+             alert("Upload successful but no URL returned.");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Upload failed: " + e.message);
+    } finally {
+        btn.innerText = oldText;
+        btn.disabled = false;
+    }
 };
 
 document.getElementById("btnNewsPrev")?.addEventListener("click", async () => {

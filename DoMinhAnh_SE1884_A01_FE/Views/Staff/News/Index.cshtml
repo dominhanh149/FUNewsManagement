@@ -73,6 +73,11 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Content</label>
+                        <div class="input-group mb-2">
+                             <input type="file" class="form-control" id="imgUpload" accept="image/*">
+                             <button class="btn btn-outline-secondary" type="button" id="btnUploadImg">Upload & Insert</button>
+                        </div>
+                        <div id="imgPreview" class="mb-2"></div>
                         <textarea id="content" class="form-control" rows="6"></textarea>
                     </div>
 
@@ -122,7 +127,7 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/staff.news.js"></script>
+    <script src="~/js/staff.news.js?v=3"></script>
 
     <style>
         /* Giữ bảng gọn: cắt text dài + hover để xem đầy đủ */

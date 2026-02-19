@@ -110,7 +110,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseStaticFiles(); // Enable serving files from wwwroot
 app.UseCors("FE");
 
 app.UseAuthentication();

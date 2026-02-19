@@ -109,8 +109,13 @@
         if (body.trim().startsWith('<')) {
             bodyEl.innerHTML = body;
         } else {
-            // Plain text → chia đoạn theo newline
-            bodyEl.innerHTML = body
+            // 1. Simple Markdown Image Parser: ![alt](url) → <img ... />
+            let html = body.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, url) => {
+                return `<img src="${url}" alt="${alt}" class="img-fluid rounded my-3 d-block" />`;
+            });
+
+            // 2. Plain text → chia đoạn theo newline
+            bodyEl.innerHTML = html
                 .split(/\n{2,}/)
                 .map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`)
                 .join('');

@@ -74,13 +74,17 @@ window.api = (() => {
             }
         }
 
+        const headers = { ...(options.headers || {}) };
+        
+        // Auto set JSON content type if not FormData
+        if (!(options.body instanceof FormData)) {
+            headers["Content-Type"] = "application/json";
+        }
+
         try {
             const res = await fetch(`${baseUrl}${path}`, {
                 ...options,
-                headers: {
-                    "Content-Type": "application/json",
-                    ...(options.headers || {})
-                },
+                headers,
                 credentials: "include"
             });
 
@@ -160,8 +164,8 @@ window.api = (() => {
 
     return {
         get:  (path)        => request(path, { method: "GET" }),
-        post: (path, body)  => request(path, { method: "POST",  body: JSON.stringify(body) }),
-        put:  (path, body)  => request(path, { method: "PUT",   body: JSON.stringify(body) }),
+        post: (path, body)  => request(path, { method: "POST",  body: (body instanceof FormData) ? body : JSON.stringify(body) }),
+        put:  (path, body)  => request(path, { method: "PUT",   body: (body instanceof FormData) ? body : JSON.stringify(body) }),
         del:  (path)        => request(path, { method: "DELETE" })
     };
 })();
