@@ -21,7 +21,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("FE", policy =>
     {
-        policy.WithOrigins("https://localhost:7024")  // PORT FE của bạn
+        policy.WithOrigins("https://localhost:7024", "http://localhost:5120")  // PORT FE của bạn
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -95,6 +95,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
+
+builder.Services.AddSignalR();
 builder.Services.RegisterCustomServices();
 
 var app = builder.Build();
@@ -114,5 +116,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<Assignmen_PRN232_1.Hubs.NewsHub>("/newsHub");
 
 app.Run();

@@ -1,11 +1,13 @@
 using Assignmen_PRN232__.Dto;
 using Assignmen_PRN232__.Dto.Common;
 using Assignmen_PRN232__.Models;
+using Assignmen_PRN232_1.Hubs;
 using Assignmen_PRN232_1.Services;
 using Assignmen_PRN232_1.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Assignmen_PRN232_1.Controllers
 {
@@ -16,11 +18,13 @@ namespace Assignmen_PRN232_1.Controllers
     {
         private readonly INewsArticleService _service;
         private readonly AppDbContext _db;
+        private readonly IHubContext<NewsHub> _hub;
 
-        public NewsArticlesController(INewsArticleService service, AppDbContext db)
+        public NewsArticlesController(INewsArticleService service, AppDbContext db, IHubContext<NewsHub> hub)
         {
             _service = service;
             _db = db;
+            _hub = hub;
         }
         [HttpGet]
         public async Task<IActionResult> GetListPaging([FromQuery] NewsArticleSearchDto dto)
@@ -94,6 +98,26 @@ namespace Assignmen_PRN232_1.Controllers
                 return BadRequest(result);
             }
 
+            // SignalR broadcast
+            try
+            {
+                var action = isNew ? "created" : "updated";
+                var article = result.Data;
+                if (article != null && article.NewsStatus == true)
+                {
+                    await _hub.Clients.Group("public").SendAsync("ReceiveArticleUpdate", new Assignmen_PRN232_1.Hubs.ArticleNotification
+                    {
+                        Action = action,
+                        NewsArticleId = article.NewsArticleId,
+                        NewsTitle = article.NewsTitle,
+                        CategoryName = article.CategoryName,
+                        AuthorName = article.CreatedByName,
+                        NewsStatus = article.NewsStatus
+                    });
+                }
+            }
+            catch { /* ignore signalr errors */ }
+
             return Ok(result);
         }
 
@@ -132,6 +156,18 @@ namespace Assignmen_PRN232_1.Controllers
 
                 return BadRequest(result);
             }
+
+            // SignalR broadcast
+            try
+            {
+                await _hub.Clients.Group("public").SendAsync("ReceiveArticleUpdate", new Assignmen_PRN232_1.Hubs.ArticleNotification
+                {
+                    Action = "deleted",
+                    NewsArticleId = id
+                });
+            }
+            catch { }
+
             return Ok(result);
         }
 
@@ -197,6 +233,17 @@ namespace Assignmen_PRN232_1.Controllers
 
             if (!success)
                 return NotFound();
+
+            // Notify view count update check
+            var article = await _db.NewsArticles.FindAsync(id);
+            if (article != null)
+            {
+                 await _hub.Clients.Group("public").SendAsync("ReceiveViewUpdate", new Assignmen_PRN232_1.Hubs.ViewCountNotification
+                 {
+                     NewsArticleId = id,
+                     ViewCount = article.ViewCount
+                 });
+            }
 
             return Ok(new { success = true });
         }

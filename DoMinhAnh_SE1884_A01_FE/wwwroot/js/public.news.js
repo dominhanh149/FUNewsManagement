@@ -68,7 +68,8 @@ async function loadNews() {
                     </td>
                     <td class="text-center">
                         <span style="color:#f5576c;font-weight:600">
-                            <i class="bi bi-eye-fill me-1"></i>${views}
+                            <i class="bi bi-eye-fill me-1"></i>
+                            <span id="view-count-${id}">${views}</span>
                         </span>
                     </td>
                     <td class="text-center">
