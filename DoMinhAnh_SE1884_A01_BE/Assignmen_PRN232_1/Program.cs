@@ -98,6 +98,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddSignalR();
 builder.Services.RegisterCustomServices();
+builder.Services.AddHostedService<Assignmen_PRN232_1.Services.Background.PeriodicCleanupService>();
 
 var app = builder.Build();
 
