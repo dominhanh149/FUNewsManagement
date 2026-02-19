@@ -46,8 +46,46 @@
         window.location.href = "/";
     }
 
+    // Offline Mode Logic
+    function handleConnectionable() {
+        const banner = document.getElementById("offlineBanner");
+        if (!banner) return;
+
+        if (navigator.onLine) {
+            banner.classList.add("d-none");
+            // Optional: Show "Back Online" toast if coming from offline
+        } else {
+            banner.classList.remove("d-none");
+        }
+    }
+
+    window.addEventListener('online', () => {
+        handleConnectionable();
+        // Show toast using existing showToast if available (from signalr-client or global)
+        // We can dispatch a custom event or check for global function
+        const toastContainer = document.getElementById("toastContainer");
+        if(toastContainer) {
+            // Manual toast creation or reusing signalr's logic if exposed
+            // For now, simple console log
+            console.log("Back Online");
+        }
+    });
+
+    window.addEventListener('offline', () => {
+        handleConnectionable();
+        console.log("Went Offline");
+    });
+
     document.addEventListener("DOMContentLoaded", () => {
         applyNavbar();
+        handleConnectionable(); // check on load
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(reg => console.log('SW registered!', reg))
+                .catch(err => console.log('SW failed', err));
+        }
 
         const btnLogout = document.getElementById("btnLogout");
         if (btnLogout) btnLogout.addEventListener("click", logout);

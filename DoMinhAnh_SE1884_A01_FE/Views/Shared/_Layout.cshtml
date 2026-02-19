@@ -41,6 +41,11 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
+    <!-- Offline Banner -->
+    <div id="offlineBanner" class="d-none position-fixed top-0 start-0 w-100 bg-danger text-white text-center py-2 fw-bold" style="z-index: 10000; transition: all 0.3s ease;">
+        <i class="bi bi-wifi-off me-2"></i> Bạn đang Offline. Đang hiển thị dữ liệu đã lưu.
+    </div>
+
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
         <a class="navbar-brand text-white" href="/">FUNews</a>
 
@@ -106,10 +111,10 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/api.js?v=2"></script>
+    <script src="~/js/api.js?v=3"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
     <script src="~/js/signalr-client.js?v=4"></script>
-    <script src="~/js/site.js?v=2"></script>
+    <script src="~/js/site.js?v=3"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

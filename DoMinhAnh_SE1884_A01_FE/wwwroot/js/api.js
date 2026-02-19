@@ -55,9 +55,16 @@ window.api = (() => {
 
     // ── Core request ────────────────────────────────────────────────────────
     async function request(path, options = {}) {
-        // Proactive: đọc access_token từ meta tag nếu có, hoặc bỏ qua
-        // (token thực sự nằm trong session cookie, server tự đính vào)
-        // Chỉ cần trigger refresh nếu có meta tag chứa exp
+        // Options: enableCache (default true for GET), ...
+        const method = options.method || "GET";
+        const enableCache = options.enableCache ?? (method === "GET");
+        
+        // Key generation for cache
+        const cacheKey = enableCache 
+            ? `funews_cache_${method}_${path}_${options.body || ""}` 
+            : null;
+
+        // Proactive token refresh (meta tag logic)
         const tokenMeta = document.querySelector('meta[name="token-exp"]');
         if (tokenMeta) {
             const expSec = parseInt(tokenMeta.content, 10);
@@ -67,21 +74,8 @@ window.api = (() => {
             }
         }
 
-        const res = await fetch(`${baseUrl}${path}`, {
-            ...options,
-            headers: {
-                "Content-Type": "application/json",
-                ...(options.headers || {})
-            },
-            credentials: "include"
-        });
-
-        // Reactive: 401 → refresh → retry
-        if (res.status === 401) {
-            await proactiveRefresh();
-
-            // retry
-            const retryRes = await fetch(`${baseUrl}${path}`, {
+        try {
+            const res = await fetch(`${baseUrl}${path}`, {
                 ...options,
                 headers: {
                     "Content-Type": "application/json",
@@ -90,15 +84,56 @@ window.api = (() => {
                 credentials: "include"
             });
 
-            if (retryRes.status === 401) {
-                window.location.href = "/";   // hết hạn hẳn → login lại
-                throw new Error("Session expired.");
+            // Reactive: 401 → refresh → retry
+            if (res.status === 401) {
+                await proactiveRefresh();
+
+                // retry
+                const retryRes = await fetch(`${baseUrl}${path}`, {
+                    ...options,
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...(options.headers || {})
+                    },
+                    credentials: "include"
+                });
+
+                if (retryRes.status === 401) {
+                    window.location.href = "/";   // hết hạn hẳn → login lại
+                    throw new Error("Session expired.");
+                }
+
+                const data = await parseResponse(retryRes);
+                if (enableCache && data && data.success !== false) {
+                     try { localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data })); } catch {}
+                }
+                return data;
             }
 
-            return parseResponse(retryRes);
-        }
+            const data = await parseResponse(res);
+            
+            // Success -> Cache it
+            if (enableCache && res.ok && data && data.success !== false) {
+                try { localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data })); } catch {}
+            }
+            
+            return data;
 
-        return parseResponse(res);
+        } catch (err) {
+            // Network error / Offline
+            if (enableCache && cacheKey) {
+                const cached = localStorage.getItem(cacheKey);
+                if (cached) {
+                    try {
+                        const parsed = JSON.parse(cached);
+                        console.warn(`[Offline Mode] Serving cached data for ${path}`);
+                        // Notify user visually if needed? (Banner is handled by site.js)
+                        return parsed.data;
+                    } catch {}
+                }
+            }
+            throw err;
+        }
     }
 
     async function parseResponse(res) {

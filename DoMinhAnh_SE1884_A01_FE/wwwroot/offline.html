@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bạn đang Offline - FUNews</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; height: 100vh; flex-direction: column; }
+        .offline-card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; max-width: 500px; width: 90%; }
+        .icon-off { font-size: 4rem; color: #dc3545; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="offline-card">
+        <i class="bi bi-wifi-off icon-off"></i>
+        <h2 class="fw-bold mb-3">Mất kết nối Internet</h2>
+        <p class="text-muted mb-4">
+            Bạn đang ngoại tuyến. Một số tính năng có thể không hoạt động.
+            Dữ liệu đã tải trước đó vẫn có thể xem được nếu bạn quay lại.
+        </p>
+        <button onclick="window.location.reload()" class="btn btn-primary px-4 py-2 me-2">
+            <i class="bi bi-arrow-clockwise me-2"></i>Thử lại
+        </button>
+        <a href="/" class="btn btn-outline-secondary px-4 py-2">
+            <i class="bi bi-house me-2"></i>Trang chủ
+        </a>
+    </div>
+</body>
+</html>
