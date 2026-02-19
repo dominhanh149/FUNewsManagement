@@ -19,6 +19,7 @@ namespace Assignmen_PRN232_1.Services.IServices
         Task<ApiResponse<bool>> RemoveTagAsync(string newsArticleId, int tagId);
         Task<ApiResponse<bool>> SetTagsAsync(string newsArticleId, List<int> tagIds);
         Task<bool> IncreaseViewAsync(string id);
+        Task<PagingDto<NewsArticleDto>> GetAuditLogAsync(AuditLogSearchDto dto);
 
     }
 }

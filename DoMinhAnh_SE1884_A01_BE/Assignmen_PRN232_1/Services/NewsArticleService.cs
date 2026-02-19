@@ -304,7 +304,7 @@ namespace Assignmen_PRN232_1.Services
                 prop.SetValue(dto, true);
         }
 
-        private static NewsArticleDto MapToDto(NewsArticle x)
+        private NewsArticleDto MapToDto(NewsArticle x)
         {
             return new NewsArticleDto
             {
@@ -321,6 +321,14 @@ namespace Assignmen_PRN232_1.Services
                 CreatedById = x.CreatedById,
                 CreatedByName = x.CreatedBy?.AccountName,
                 UpdatedById = x.UpdatedById,
+                UpdatedByName = x.UpdatedById.HasValue
+                    ? (_appDbContext != null
+                        ? _appDbContext.SystemAccounts
+                            .Where(a => a.AccountId == x.UpdatedById)
+                            .Select(a => a.AccountName)
+                            .FirstOrDefault()
+                        : null)
+                    : null,
                 ModifiedDate = x.ModifiedDate,
                 Tags = x.Tags?.Select(t => new TagDto
                 {
@@ -328,6 +336,82 @@ namespace Assignmen_PRN232_1.Services
                     TagName = t.TagName,
                     Note = t.Note
                 }).ToList() ?? new List<TagDto>()
+            };
+        }
+
+        public async Task<PagingDto<NewsArticleDto>> GetAuditLogAsync(AuditLogSearchDto dto)
+        {
+            var query = _appDbContext.NewsArticles
+                .Include(x => x.Category)
+                .Include(x => x.CreatedBy)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(dto.Title))
+                query = query.Where(x => x.NewsTitle != null && x.NewsTitle.Contains(dto.Title));
+
+            if (dto.CategoryId.HasValue)
+                query = query.Where(x => x.CategoryId == dto.CategoryId);
+
+            if (dto.UpdatedById.HasValue)
+                query = query.Where(x => x.UpdatedById == dto.UpdatedById);
+
+            if (dto.FromDate.HasValue)
+                query = query.Where(x => x.ModifiedDate >= dto.FromDate);
+
+            if (dto.ToDate.HasValue)
+                query = query.Where(x => x.ModifiedDate <= dto.ToDate.Value.AddDays(1));
+
+            if (dto.OnlyModified == true)
+                query = query.Where(x => x.UpdatedById != null);
+
+            var total = await query.CountAsync();
+
+            var pageNumber = dto.PageNumber < 1 ? 1 : dto.PageNumber;
+            var pageSize   = dto.PageSize   < 1 ? 10 : dto.PageSize;
+
+            var items = await query
+                .OrderByDescending(x => x.ModifiedDate ?? x.CreatedDate)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // get updatedBy names in one query
+            var updatedByIds = items
+                .Where(x => x.UpdatedById.HasValue)
+                .Select(x => x.UpdatedById!.Value)
+                .Distinct()
+                .ToList();
+
+            var updatedByMap = updatedByIds.Count > 0
+                ? await _appDbContext.SystemAccounts
+                    .Where(a => updatedByIds.Contains(a.AccountId))
+                    .ToDictionaryAsync(a => a.AccountId, a => a.AccountName)
+                : new Dictionary<short, string?>();
+
+            var result = items.Select(x => new NewsArticleDto
+            {
+                NewsArticleId  = x.NewsArticleId,
+                NewsTitle      = x.NewsTitle,
+                Headline       = x.Headline,
+                CategoryId     = x.CategoryId,
+                CategoryName   = x.Category?.CategoryName,
+                NewsStatus     = x.NewsStatus,
+                CreatedDate    = x.CreatedDate,
+                CreatedById    = x.CreatedById,
+                CreatedByName  = x.CreatedBy?.AccountName,
+                UpdatedById    = x.UpdatedById,
+                UpdatedByName  = x.UpdatedById.HasValue && updatedByMap.TryGetValue(x.UpdatedById.Value, out var uname)
+                                     ? uname : null,
+                ModifiedDate   = x.ModifiedDate,
+                ViewCount      = x.ViewCount
+            }).ToList();
+
+            return new PagingDto<NewsArticleDto>
+            {
+                PageNumber = pageNumber,
+                PageSize   = pageSize,
+                TotalCount = total,
+                Items      = result
             };
         }
 

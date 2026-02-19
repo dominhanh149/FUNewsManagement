@@ -201,5 +201,16 @@ namespace Assignmen_PRN232_1.Controllers
             return Ok(new { success = true });
         }
 
+        /// <summary>
+        /// GET audit log: all articles with editor info. Admin only.
+        /// </summary>
+        [HttpPost("audit-log")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAuditLog([FromBody] AuditLogSearchDto dto)
+        {
+            var result = await _service.GetAuditLogAsync(dto);
+            return Ok(result);
+        }
+
     }
 }

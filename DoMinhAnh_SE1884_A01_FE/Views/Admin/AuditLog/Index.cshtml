@@ -1,0 +1,105 @@
+@{
+    ViewData["Title"] = "Audit Log";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h2 class="fw-bold mb-0" style="color:#1a1a2e">
+            <i class="bi bi-clock-history me-2" style="color:#6c63ff"></i>Audit Log
+        </h2>
+        <p class="text-muted mb-0 mt-1">Lịch sử chỉnh sửa bài viết — ai đã sửa bài nào và khi nào</p>
+    </div>
+</div>
+
+<!-- Filter Card -->
+<div class="card border-0 shadow-sm mb-4" style="border-radius:16px">
+    <div class="card-body p-4">
+        <h6 class="fw-semibold mb-3 text-muted text-uppercase" style="font-size:.75rem;letter-spacing:.08em">
+            <i class="bi bi-funnel me-1"></i>Bộ lọc
+        </h6>
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label fw-medium small">Tiêu đề bài viết</label>
+                <input id="filterTitle" type="text" class="form-control" placeholder="Tìm theo tiêu đề..." style="border-radius:10px" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-medium small">Người chỉnh sửa</label>
+                <select id="filterEditor" class="form-select" style="border-radius:10px">
+                    <option value="">— Tất cả —</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-medium small">Từ ngày (sửa)</label>
+                <input id="filterFrom" type="date" class="form-control" style="border-radius:10px" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-medium small">Đến ngày (sửa)</label>
+                <input id="filterTo" type="date" class="form-control" style="border-radius:10px" />
+            </div>
+            <div class="col-md-2 d-flex flex-column gap-2">
+                <div class="form-check mt-3">
+                    <input id="filterOnlyMod" class="form-check-input" type="checkbox" />
+                    <label class="form-check-label small" for="filterOnlyMod">Chỉ bài đã sửa</label>
+                </div>
+                <div class="d-flex gap-2">
+                    <button id="btnSearch" class="btn btn-sm flex-fill text-white fw-semibold"
+                            style="background:linear-gradient(135deg,#6c63ff,#4facfe);border-radius:8px;border:none">
+                        <i class="bi bi-search"></i> Lọc
+                    </button>
+                    <button id="btnReset" class="btn btn-sm btn-outline-secondary flex-fill" style="border-radius:8px">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading -->
+<div id="loading" class="text-center py-5 d-none">
+    <div class="spinner-border" style="color:#6c63ff;width:2.5rem;height:2.5rem" role="status"></div>
+    <p class="mt-2 text-muted">Đang tải...</p>
+</div>
+
+<!-- Table -->
+<div id="auditTable" class="card border-0 shadow-sm d-none" style="border-radius:16px">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" style="font-size:.88rem">
+                <thead style="background:#f6f5ff">
+                    <tr>
+                        <th class="px-4 py-3 border-0 text-muted fw-semibold" style="font-size:.75rem;text-transform:uppercase;width:180px">Article ID</th>
+                        <th class="py-3 border-0 text-muted fw-semibold" style="font-size:.75rem;text-transform:uppercase">Tiêu đề / Category</th>
+                        <th class="py-3 border-0 text-muted fw-semibold text-center" style="font-size:.75rem;text-transform:uppercase;width:100px">Trạng thái</th>
+                        <th class="py-3 border-0 text-muted fw-semibold" style="font-size:.75rem;text-transform:uppercase;width:180px">Người tạo / Ngày tạo</th>
+                        <th class="py-3 border-0 text-muted fw-semibold" style="font-size:.75rem;text-transform:uppercase;width:200px">
+                            <i class="bi bi-pencil-square me-1" style="color:#6c63ff"></i>Người sửa / Ngày sửa
+                        </th>
+                        <th class="py-3 pe-4 border-0 text-muted fw-semibold text-center" style="font-size:.75rem;text-transform:uppercase;width:80px">Views</th>
+                    </tr>
+                </thead>
+                <tbody id="auditBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Paging -->
+<div class="d-flex align-items-center justify-content-between mt-3">
+    <span id="pagingInfo" class="text-muted small"></span>
+    <div class="d-flex gap-2">
+        <button id="btnPrev" class="btn btn-sm btn-outline-secondary" style="border-radius:8px" disabled>
+            <i class="bi bi-chevron-left"></i> Trước
+        </button>
+        <button id="btnNext" class="btn btn-sm btn-outline-secondary" style="border-radius:8px" disabled>
+            Sau <i class="bi bi-chevron-right"></i>
+        </button>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <script src="~/js/admin.auditlog.js"></script>
+}

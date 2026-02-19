@@ -34,6 +34,8 @@ namespace Assignmen_PRN232__.Dto
 
         public short? UpdatedById { get; set; }
 
+        public string? UpdatedByName { get; set; }
+
         public DateTime? ModifiedDate { get; set; }
 
         public ICollection<TagDto> Tags { get; set; } = new List<TagDto>();
@@ -78,5 +80,16 @@ namespace Assignmen_PRN232__.Dto
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
         public short? CreatedById { get; set; }
+    }
+
+    public class AuditLogSearchDto : BaseSearchDto
+    {
+        public string? Title { get; set; }
+        public short? UpdatedById { get; set; }
+        public short? CategoryId { get; set; }
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+        /// <summary>If true, only show articles that have been edited (UpdatedById != null)</summary>
+        public bool? OnlyModified { get; set; }
     }
 }
