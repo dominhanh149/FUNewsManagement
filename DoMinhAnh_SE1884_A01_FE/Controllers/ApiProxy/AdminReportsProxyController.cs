@@ -20,11 +20,12 @@ public class AdminReportsProxyController : ControllerBase
     }
 
     [HttpGet("dashboard")]
-    public async Task<IActionResult> Dashboard([FromQuery] Dictionary<string, string> query)
+    public async Task<IActionResult> Dashboard()
     {
         var client = _http.CreateClient("AnalyticsApi");
-        var qs = string.Join("&", query.Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value)}"));
-        var res = await client.GetAsync("/api/analytics/dashboard" + (qs.Length > 0 ? "?" + qs : ""));
+        // Forward toàn bộ query string từ FE sang Analytics API
+        var qs = Request.QueryString.Value ?? "";
+        var res = await client.GetAsync("/api/analytics/dashboard" + qs);
         var json = await res.Content.ReadAsStringAsync();
         return StatusCode((int)res.StatusCode, json);
     }
@@ -33,22 +34,29 @@ public class AdminReportsProxyController : ControllerBase
     public async Task<IActionResult> Trending()
     {
         var client = _http.CreateClient("AnalyticsApi");
-        var res = await client.GetAsync("/api/analytics/trending");
+        var qs = Request.QueryString.Value ?? "";
+        var res = await client.GetAsync("/api/analytics/trending" + qs);
         var json = await res.Content.ReadAsStringAsync();
         return StatusCode((int)res.StatusCode, json);
     }
 
     [HttpGet("export")]
-    public async Task<IActionResult> Export([FromQuery] Dictionary<string, string> query)
+    public async Task<IActionResult> Export()
     {
         var client = _http.CreateClient("AnalyticsApi");
-        var qs = string.Join("&", query.Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value)}"));
-        var res = await client.GetAsync("/api/analytics/export" + (qs.Length > 0 ? "?" + qs : ""));
+        var qs = Request.QueryString.Value ?? "";
+        var res = await client.GetAsync("/api/analytics/export" + qs);
 
         var bytes = await res.Content.ReadAsByteArrayAsync();
         var contentType = res.Content.Headers.ContentType?.ToString()
                          ?? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-        return File(bytes, contentType, "report.xlsx");
+
+        // Lấy filename từ header nếu có
+        var disposition = res.Content.Headers.ContentDisposition?.FileNameStar
+                          ?? res.Content.Headers.ContentDisposition?.FileName
+                          ?? $"FUNews_Report_{DateTime.Now:yyyyMMdd_HHmm}.xlsx";
+        disposition = disposition.Trim('"');
+
+        return File(bytes, contentType, disposition);
     }
 }
-

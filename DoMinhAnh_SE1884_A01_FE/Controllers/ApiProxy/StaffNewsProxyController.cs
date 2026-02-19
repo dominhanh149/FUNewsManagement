@@ -70,4 +70,24 @@ public class StaffNewsProxyController : ControllerBase
         var json = await res.Content.ReadAsStringAsync();
         return StatusCode((int)res.StatusCode, json);
     }
+
+    /// <summary>POST /fe-api/staff/news/{id}/view — tăng ViewCount</summary>
+    [HttpPost("{id}/view")]
+    public async Task<IActionResult> IncreaseView(string id)
+    {
+        var client = _http.CreateClient("CoreApi");
+        var res = await client.PostAsync($"/api/NewsArticles/{id}/view", null);
+        var json = await res.Content.ReadAsStringAsync();
+        return StatusCode((int)res.StatusCode, json);
+    }
+
+    /// <summary>GET /fe-api/staff/news/recommend/{id} — gợi ý bài liên quan</summary>
+    [HttpGet("recommend/{id}")]
+    public async Task<IActionResult> Recommend(string id)
+    {
+        var client = _http.CreateClient("AnalyticsApi");
+        var res = await client.GetAsync($"/api/recommend/{id}");
+        var json = await res.Content.ReadAsStringAsync();
+        return StatusCode((int)res.StatusCode, json);
+    }
 }

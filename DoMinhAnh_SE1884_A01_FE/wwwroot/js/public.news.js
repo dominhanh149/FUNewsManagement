@@ -48,21 +48,35 @@ async function loadNews() {
         // Render table
         const tb = document.getElementById("tbNews");
         tb.innerHTML = items.map(x => {
+            const id = x.newsArticleId ?? x.NewsArticleId ?? "";
             const title = x.newsTitle ?? x.NewsTitle ?? "";
             const category = x.categoryName ?? x.CategoryName ?? "";
             const createdRaw = x.createdDate ?? x.CreatedDate ?? null;
-            const created = createdRaw ? new Date(createdRaw).toLocaleString() : "";
+            const created = createdRaw ? new Date(createdRaw).toLocaleDateString("vi-VN") : "";
             const statusVal = (x.newsStatus ?? x.NewsStatus) === true;
+            const views = (x.viewCount ?? x.ViewCount ?? 0).toLocaleString("vi-VN");
 
             return `
                 <tr>
-                    <td>${title}</td>
+                    <td class="fw-semibold">${title}</td>
                     <td>${category}</td>
                     <td>${created}</td>
                     <td>
                         <span class="badge ${statusVal ? "bg-success" : "bg-secondary"}">
                             ${statusVal ? "Active" : "Inactive"}
                         </span>
+                    </td>
+                    <td class="text-center">
+                        <span style="color:#f5576c;font-weight:600">
+                            <i class="bi bi-eye-fill me-1"></i>${views}
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <a href="/News/Detail/${id}"
+                           class="btn btn-sm text-white"
+                           style="background:linear-gradient(135deg,#6c63ff,#4facfe);border-radius:8px;border:none;font-size:.8rem">
+                            <i class="bi bi-arrow-right-circle me-1"></i>Xem chi tiết
+                        </a>
                     </td>
                 </tr>
             `;

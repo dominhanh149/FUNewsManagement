@@ -26,6 +26,8 @@ namespace Assignmen_PRN232__.Dto
 
         public bool? NewsStatus { get; set; }
 
+        public int ViewCount { get; set; }
+
         public short? CreatedById { get; set; }
 
         public string? CreatedByName { get; set; }

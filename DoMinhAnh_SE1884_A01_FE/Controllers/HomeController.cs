@@ -4,13 +4,14 @@ namespace FE.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IConfiguration _config;
-        public HomeController(IConfiguration config) => _config = config;
+        public IActionResult Index() => View();
 
-        public IActionResult Index()
+        // GET /News/Detail/{id}
+        [Route("News/Detail/{id}")]
+        public IActionResult Detail(string id)
         {
-            ViewBag.ApiBaseUrl = _config["Api:BaseUrl"];
-            return View();
+            ViewBag.ArticleId = id;
+            return View("~/Views/Home/Detail.cshtml");
         }
     }
 }

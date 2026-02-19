@@ -1,45 +1,45 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "E:\\Hoc\\PRN232\\AnalyticsAPI\\",
+  "WorkspaceRootPath": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\analyticsapi\\dto\\reportfilterdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\funewsmanagement\\analyticsapi\\dto\\reportfilterdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|solutionrelative:dto\\reportfilterdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\analyticsapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\funewsmanagement\\analyticsapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\analyticsapi\\controllers\\recommendcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\funewsmanagement\\analyticsapi\\controllers\\recommendcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|solutionrelative:controllers\\recommendcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\analyticsapi\\controllers\\analyticscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\funewsmanagement\\analyticsapi\\controllers\\analyticscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|solutionrelative:controllers\\analyticscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\analyticsapi\\dto\\authorstatdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\funewsmanagement\\analyticsapi\\dto\\authorstatdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|solutionrelative:dto\\authorstatdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\analyticsapi\\dto\\categorystatdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\funewsmanagement\\analyticsapi\\dto\\categorystatdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|solutionrelative:dto\\categorystatdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\analyticsapi\\dto\\newsarticlereportdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\funewsmanagement\\analyticsapi\\dto\\newsarticlereportdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|solutionrelative:dto\\newsarticlereportdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\analyticsapi\\models\\funewsmanagementcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\funewsmanagement\\analyticsapi\\models\\funewsmanagementcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|solutionrelative:models\\funewsmanagementcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\analyticsapi\\models\\newsarticle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\funewsmanagement\\analyticsapi\\models\\newsarticle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|solutionrelative:models\\newsarticle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\analyticsapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|e:\\hoc\\prn232\\funewsmanagement\\analyticsapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C0A44499-66AC-4960-B8E4-AB008BECA279}|AnalyticsAPI.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -56,9 +56,9 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "ReportFilterDto.cs",
-              "DocumentMoniker": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Dto\\ReportFilterDto.cs",
+              "DocumentMoniker": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Dto\\ReportFilterDto.cs",
               "RelativeDocumentMoniker": "Dto\\ReportFilterDto.cs",
-              "ToolTip": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Dto\\ReportFilterDto.cs",
+              "ToolTip": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Dto\\ReportFilterDto.cs",
               "RelativeToolTip": "Dto\\ReportFilterDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAuwAkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -69,9 +69,9 @@
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "RecommendController.cs",
-              "DocumentMoniker": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Controllers\\RecommendController.cs",
+              "DocumentMoniker": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Controllers\\RecommendController.cs",
               "RelativeDocumentMoniker": "Controllers\\RecommendController.cs",
-              "ToolTip": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Controllers\\RecommendController.cs",
+              "ToolTip": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Controllers\\RecommendController.cs",
               "RelativeToolTip": "Controllers\\RecommendController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -81,9 +81,9 @@
               "$type": "Document",
               "DocumentIndex": 3,
               "Title": "AnalyticsController.cs",
-              "DocumentMoniker": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Controllers\\AnalyticsController.cs",
+              "DocumentMoniker": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Controllers\\AnalyticsController.cs",
               "RelativeDocumentMoniker": "Controllers\\AnalyticsController.cs",
-              "ToolTip": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Controllers\\AnalyticsController.cs",
+              "ToolTip": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Controllers\\AnalyticsController.cs",
               "RelativeToolTip": "Controllers\\AnalyticsController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -93,9 +93,9 @@
               "$type": "Document",
               "DocumentIndex": 4,
               "Title": "AuthorStatDto.cs",
-              "DocumentMoniker": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Dto\\AuthorStatDto.cs",
+              "DocumentMoniker": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Dto\\AuthorStatDto.cs",
               "RelativeDocumentMoniker": "Dto\\AuthorStatDto.cs",
-              "ToolTip": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Dto\\AuthorStatDto.cs",
+              "ToolTip": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Dto\\AuthorStatDto.cs",
               "RelativeToolTip": "Dto\\AuthorStatDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAuwAcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -105,9 +105,9 @@
               "$type": "Document",
               "DocumentIndex": 5,
               "Title": "CategoryStatDto.cs",
-              "DocumentMoniker": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Dto\\CategoryStatDto.cs",
+              "DocumentMoniker": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Dto\\CategoryStatDto.cs",
               "RelativeDocumentMoniker": "Dto\\CategoryStatDto.cs",
-              "ToolTip": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Dto\\CategoryStatDto.cs",
+              "ToolTip": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Dto\\CategoryStatDto.cs",
               "RelativeToolTip": "Dto\\CategoryStatDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAuwAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -117,9 +117,9 @@
               "$type": "Document",
               "DocumentIndex": 6,
               "Title": "NewsArticleReportDto.cs",
-              "DocumentMoniker": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Dto\\NewsArticleReportDto.cs",
+              "DocumentMoniker": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Dto\\NewsArticleReportDto.cs",
               "RelativeDocumentMoniker": "Dto\\NewsArticleReportDto.cs",
-              "ToolTip": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Dto\\NewsArticleReportDto.cs",
+              "ToolTip": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Dto\\NewsArticleReportDto.cs",
               "RelativeToolTip": "Dto\\NewsArticleReportDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -129,9 +129,9 @@
               "$type": "Document",
               "DocumentIndex": 9,
               "Title": "Program.cs",
-              "DocumentMoniker": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Program.cs",
+              "DocumentMoniker": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Program.cs",
+              "ToolTip": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Program.cs",
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -141,9 +141,9 @@
               "$type": "Document",
               "DocumentIndex": 7,
               "Title": "FunewsManagementContext.cs",
-              "DocumentMoniker": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Models\\FunewsManagementContext.cs",
+              "DocumentMoniker": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Models\\FunewsManagementContext.cs",
               "RelativeDocumentMoniker": "Models\\FunewsManagementContext.cs",
-              "ToolTip": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Models\\FunewsManagementContext.cs",
+              "ToolTip": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Models\\FunewsManagementContext.cs",
               "RelativeToolTip": "Models\\FunewsManagementContext.cs",
               "ViewState": "AgIAAC4AAAAAAAAAAADwv0MAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -153,9 +153,9 @@
               "$type": "Document",
               "DocumentIndex": 8,
               "Title": "NewsArticle.cs",
-              "DocumentMoniker": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Models\\NewsArticle.cs",
+              "DocumentMoniker": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Models\\NewsArticle.cs",
               "RelativeDocumentMoniker": "Models\\NewsArticle.cs",
-              "ToolTip": "E:\\Hoc\\PRN232\\AnalyticsAPI\\Models\\NewsArticle.cs",
+              "ToolTip": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\Models\\NewsArticle.cs",
               "RelativeToolTip": "Models\\NewsArticle.cs",
               "ViewState": "AgIAABEAAAAAAAAAAAAiwB0AAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -165,14 +165,13 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "appsettings.json",
-              "DocumentMoniker": "E:\\Hoc\\PRN232\\AnalyticsAPI\\appsettings.json",
+              "DocumentMoniker": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
-              "ToolTip": "E:\\Hoc\\PRN232\\AnalyticsAPI\\appsettings.json",
+              "ToolTip": "E:\\Hoc\\PRN232\\FUNewsManagement\\AnalyticsAPI\\appsettings.json",
               "RelativeToolTip": "appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-02-18T13:11:31.957Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-18T13:11:31.957Z"
             }
           ]
         }

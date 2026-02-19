@@ -317,6 +317,7 @@ namespace Assignmen_PRN232_1.Services
                 CategoryId = x.CategoryId,
                 CategoryName = x.Category?.CategoryName,
                 NewsStatus = x.NewsStatus,
+                ViewCount = x.ViewCount,
                 CreatedById = x.CreatedById,
                 CreatedByName = x.CreatedBy?.AccountName,
                 UpdatedById = x.UpdatedById,

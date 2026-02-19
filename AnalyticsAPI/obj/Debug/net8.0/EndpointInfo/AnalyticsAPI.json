@@ -5,6 +5,174 @@
     "version": "1.0"
   },
   "paths": {
+    "/api/analytics/dashboard": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "parameters": [
+          {
+            "name": "fromDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "authorId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/analytics/trending": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "parameters": [
+          {
+            "name": "top",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "fromDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/analytics/export": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "parameters": [
+          {
+            "name": "fromDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/recommend/{id}": {
+      "get": {
+        "tags": [
+          "Recommend"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/reports/news-articles": {
+      "post": {
+        "tags": [
+          "Reports"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportFilterDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportFilterDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportFilterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/WeatherForecast": {
       "get": {
         "tags": [
@@ -47,6 +215,40 @@
   },
   "components": {
     "schemas": {
+      "ReportFilterDto": {
+        "type": "object",
+        "properties": {
+          "fromDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "toDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "categoryId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "authorId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "WeatherForecast": {
         "type": "object",
         "properties": {

@@ -1,64 +1,224 @@
 ﻿@{
-    ViewData["Title"] = "Reports";
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h3 class="mb-3">News Report (Admin)</h3>
+<!-- Toast Container -->
+<div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999"></div>
 
-<div class="row g-2 mb-3">
-    <div class="col-md-3">
-        <label class="form-label">FromDate</label>
-        <input id="fromDate" type="date" class="form-control" />
+<!-- Page Header -->
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h2 class="fw-bold mb-0" style="color:#1a1a2e">
+            <i class="bi bi-bar-chart-line-fill me-2" style="color:#6c63ff"></i>Analytics Dashboard
+        </h2>
+        <p class="text-muted mb-0 mt-1">Thống kê bài viết theo category và tác giả</p>
     </div>
-    <div class="col-md-3">
-        <label class="form-label">ToDate</label>
-        <input id="toDate" type="date" class="form-control" />
-    </div>
-    <div class="col-md-3">
-        <label class="form-label">CategoryId</label>
-        <input id="categoryId" type="number" min="0" class="form-control" />
-    </div>
-    <div class="col-md-3">
-        <label class="form-label">AuthorId</label>
-        <input id="authorId" type="number" min="0" class="form-control" />
+    <div class="d-flex gap-2">
+        <button id="btnExport" class="btn btn-success d-flex align-items-center gap-2">
+            <i class="bi bi-file-earmark-excel-fill"></i> Export Excel
+        </button>
+        <button id="btnRefresh" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+            <i class="bi bi-arrow-clockwise"></i> Refresh
+        </button>
     </div>
 </div>
 
-<button id="btnRun" class="btn btn-primary mb-3">Run report</button>
+<!-- Filter Card -->
+<div class="card border-0 shadow-sm mb-4" style="border-radius:16px">
+    <div class="card-body p-4">
+        <h6 class="fw-semibold mb-3 text-muted text-uppercase" style="font-size:.75rem;letter-spacing:.08em">
+            <i class="bi bi-funnel me-1"></i>Bộ lọc
+        </h6>
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label fw-medium" style="font-size:.85rem">Từ ngày</label>
+                <input id="fromDate" type="date" class="form-control" style="border-radius:10px" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-medium" style="font-size:.85rem">Đến ngày</label>
+                <input id="toDate" type="date" class="form-control" style="border-radius:10px" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-medium" style="font-size:.85rem">Category ID</label>
+                <input id="categoryId" type="number" min="0" placeholder="Tất cả" class="form-control" style="border-radius:10px" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-medium" style="font-size:.85rem">Author ID</label>
+                <input id="authorId" type="number" min="0" placeholder="Tất cả" class="form-control" style="border-radius:10px" />
+            </div>
+            <div class="col-md-2">
+                <button id="btnRun" class="btn w-100 text-white fw-semibold" style="background:linear-gradient(135deg,#6c63ff,#4facfe);border-radius:10px;border:none">
+                    <i class="bi bi-search me-1"></i>Lọc
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
-<div id="summary" class="mb-3"></div>
+<!-- Loading Spinner -->
+<div id="loadingSpinner" class="text-center py-5 d-none">
+    <div class="spinner-border" style="color:#6c63ff;width:3rem;height:3rem" role="status"></div>
+    <p class="mt-3 text-muted">Đang tải dữ liệu...</p>
+</div>
 
-<div class="row">
-    <div class="col-md-6">
-        <h5>By Category</h5>
-        <table class="table table-bordered table-sm">
-            <thead>
-                <tr>
-                    <th>Category</th>
-                    <th>Total</th>
-                    <th>Active</th>
-                    <th>Inactive</th>
-                </tr>
-            </thead>
-            <tbody id="tbCategory"></tbody>
-        </table>
+<!-- Summary Cards -->
+<div id="summaryCards" class="row g-3 mb-4 d-none">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:16px;background:linear-gradient(135deg,#6c63ff,#4facfe)">
+            <div class="card-body p-4 text-white">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <p class="mb-1 opacity-75 fw-medium" style="font-size:.85rem">TỔNG BÀI VIẾT</p>
+                        <h2 class="fw-bold mb-0" id="statTotal">—</h2>
+                    </div>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:56px;height:56px;background:rgba(255,255,255,.2)">
+                        <i class="bi bi-newspaper fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:16px;background:linear-gradient(135deg,#11998e,#38ef7d)">
+            <div class="card-body p-4 text-white">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <p class="mb-1 opacity-75 fw-medium" style="font-size:.85rem">ĐANG HOẠT ĐỘNG</p>
+                        <h2 class="fw-bold mb-0" id="statActive">—</h2>
+                    </div>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:56px;height:56px;background:rgba(255,255,255,.2)">
+                        <i class="bi bi-check-circle-fill fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:16px;background:linear-gradient(135deg,#f093fb,#f5576c)">
+            <div class="card-body p-4 text-white">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <p class="mb-1 opacity-75 fw-medium" style="font-size:.85rem">KHÔNG HOẠT ĐỘNG</p>
+                        <h2 class="fw-bold mb-0" id="statInactive">—</h2>
+                    </div>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:56px;height:56px;background:rgba(255,255,255,.2)">
+                        <i class="bi bi-x-circle-fill fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div id="chartsSection" class="row g-4 mb-4 d-none">
+    <!-- Pie Chart: By Category -->
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:16px">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-1">Bài viết theo Category</h6>
+                <p class="text-muted mb-3" style="font-size:.8rem">Phân bổ số lượng bài viết</p>
+                <div style="position:relative;height:280px">
+                    <canvas id="chartCategory"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="col-md-6">
-        <h5>By Author</h5>
-        <table class="table table-bordered table-sm">
-            <thead>
-                <tr>
-                    <th>Author</th>
-                    <th>Total</th>
-                    <th>Active</th>
-                    <th>Inactive</th>
-                </tr>
-            </thead>
-            <tbody id="tbAuthor"></tbody>
-        </table>
+    <!-- Bar Chart: By Author -->
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:16px">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-1">Bài viết theo Tác giả</h6>
+                <p class="text-muted mb-3" style="font-size:.8rem">Top tác giả có nhiều bài nhất</p>
+                <div style="position:relative;height:280px">
+                    <canvas id="chartAuthor"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tables Row -->
+<div id="tablesSection" class="row g-4 mb-4 d-none">
+    <!-- Category Table -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm" style="border-radius:16px">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3">Chi tiết theo Category</h6>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" style="font-size:.9rem">
+                        <thead>
+                            <tr style="background:#f8f9ff">
+                                <th class="border-0 fw-semibold text-muted" style="font-size:.78rem;text-transform:uppercase">Category</th>
+                                <th class="border-0 fw-semibold text-muted text-center" style="font-size:.78rem;text-transform:uppercase">Tổng</th>
+                                <th class="border-0 fw-semibold text-muted text-center" style="font-size:.78rem;text-transform:uppercase">Active</th>
+                                <th class="border-0 fw-semibold text-muted text-center" style="font-size:.78rem;text-transform:uppercase">Inactive</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbCategory"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Author Table -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm" style="border-radius:16px">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3">Chi tiết theo Tác giả</h6>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" style="font-size:.9rem">
+                        <thead>
+                            <tr style="background:#f8f9ff">
+                                <th class="border-0 fw-semibold text-muted" style="font-size:.78rem;text-transform:uppercase">Tác giả</th>
+                                <th class="border-0 fw-semibold text-muted text-center" style="font-size:.78rem;text-transform:uppercase">Tổng</th>
+                                <th class="border-0 fw-semibold text-muted text-center" style="font-size:.78rem;text-transform:uppercase">Active</th>
+                                <th class="border-0 fw-semibold text-muted text-center" style="font-size:.78rem;text-transform:uppercase">Inactive</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbAuthor"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Trending Section -->
+<div id="trendingSection" class="d-none">
+    <div class="card border-0 shadow-sm" style="border-radius:16px">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                    <h6 class="fw-bold mb-0">🔥 Bài viết Trending</h6>
+                    <p class="text-muted mb-0" style="font-size:.8rem">Top 10 bài viết được xem nhiều nhất</p>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="font-size:.9rem">
+                    <thead>
+                        <tr style="background:#fff8f0">
+                            <th class="border-0 fw-semibold text-muted" style="font-size:.78rem;text-transform:uppercase">#</th>
+                            <th class="border-0 fw-semibold text-muted" style="font-size:.78rem;text-transform:uppercase">Tiêu đề</th>
+                            <th class="border-0 fw-semibold text-muted" style="font-size:.78rem;text-transform:uppercase">Category</th>
+                            <th class="border-0 fw-semibold text-muted text-center" style="font-size:.78rem;text-transform:uppercase">Lượt xem</th>
+                            <th class="border-0 fw-semibold text-muted" style="font-size:.78rem;text-transform:uppercase">Ngày tạo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbTrending"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
 @section Scripts {
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <script src="~/js/admin.reports.js"></script>
 }
