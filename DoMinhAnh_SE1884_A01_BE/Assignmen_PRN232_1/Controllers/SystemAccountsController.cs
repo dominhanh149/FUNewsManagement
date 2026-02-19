@@ -52,15 +52,34 @@ namespace Assignmen_PRN232_1.Controllers.Api
         [HttpPost("create-or-edit")]
         public async Task<IActionResult> CreateOrEdit([FromBody] SystemAccountSaveDto dto)
         {
-            var response = await _service.CreateOrEditAsync(dto);
-            return StatusCode(response.StatusCode, response);
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return BadRequest(new { success = false, message = "Validation failed", errors });
+            }
+
+            try
+            {
+                var response = await _service.CreateOrEditAsync(dto);
+                if (response.Success)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(short id)
         {
             var response = await _service.DeleteAsync(id);
-            return StatusCode(response.StatusCode, response);
+            if (response.Success) return Ok(response);
+            return BadRequest(response);
         }
 
         [AllowAnonymous]
@@ -69,7 +88,7 @@ namespace Assignmen_PRN232_1.Controllers.Api
         {
             var response = await _service.LoginAsync(dto);
             if (!response.Success)
-                return StatusCode(response.StatusCode, response);
+                return BadRequest(response);
 
             var acc = response.Data;
 

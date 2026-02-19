@@ -59,50 +59,57 @@ namespace Assignmen_PRN232_1.Services
 
         public async Task<ApiResponse<SystemAccountDto>> CreateOrEditAsync(SystemAccountSaveDto dto)
         {
-            // check duplicate email
-            if (await _repo.EmailExistsAsync(dto.AccountEmail,
-                dto.AccountId == 0 ? null : dto.AccountId))
+            try
             {
-                return ApiResponse<SystemAccountDto>
-                    .ErrorResponse("Duplicate email is not allowed.");
-            }
-
-            // ===== CREATE =====
-            if (dto.AccountId == 0)
-            {
-                var entity = new SystemAccount
+                // check duplicate email
+                if (await _repo.EmailExistsAsync(dto.AccountEmail,
+                    dto.AccountId == 0 ? null : dto.AccountId))
                 {
-                    AccountId = await GenerateAccountIdAsync(), // 👈 AUTO GEN ID
-                    AccountName = dto.AccountName,
-                    AccountEmail = dto.AccountEmail,
-                    AccountPassword = dto.AccountPassword!,
-                    AccountRole = dto.AccountRole
-                };
+                    return ApiResponse<SystemAccountDto>
+                        .ErrorResponse("Duplicate email is not allowed.");
+                }
 
-                await _repo.AddAsync(entity);
+                // ===== CREATE =====
+                if (dto.AccountId == 0)
+                {
+                    var entity = new SystemAccount
+                    {
+                        AccountId = await GenerateAccountIdAsync(),
+                        AccountName = dto.AccountName,
+                        AccountEmail = dto.AccountEmail,
+                        AccountPassword = dto.AccountPassword,
+                        AccountRole = dto.AccountRole
+                    };
+
+                    await _repo.AddAsync(entity);
+                    await _repo.SaveChangesAsync();
+
+                    return ApiResponse<SystemAccountDto>
+                        .SuccessResponse(MapToDto(entity), "Created successfully.");
+                }
+
+                // ===== UPDATE =====
+                var existing = await _repo.GetByIdAsync(dto.AccountId);
+                if (existing == null)
+                    return ApiResponse<SystemAccountDto>.ErrorResponse("Account not found.");
+
+                existing.AccountName = dto.AccountName;
+                existing.AccountEmail = dto.AccountEmail;
+                existing.AccountRole = dto.AccountRole;
+
+                if (!string.IsNullOrWhiteSpace(dto.AccountPassword))
+                    existing.AccountPassword = dto.AccountPassword;
+
+                await _repo.UpdateAsync(existing);
                 await _repo.SaveChangesAsync();
 
                 return ApiResponse<SystemAccountDto>
-                    .SuccessResponse(MapToDto(entity), "Created successfully.");
+                    .SuccessResponse(MapToDto(existing), "Updated successfully.");
             }
-
-            // ===== UPDATE =====
-            var existing = await _repo.GetByIdAsync(dto.AccountId);
-            if (existing == null)
-                return ApiResponse<SystemAccountDto>.ErrorResponse("Account not found.");
-
-            existing.AccountName = dto.AccountName;
-            existing.AccountEmail = dto.AccountEmail;
-            existing.AccountRole = dto.AccountRole;
-
-            if (!string.IsNullOrWhiteSpace(dto.AccountPassword))
-                existing.AccountPassword = dto.AccountPassword;
-
-            await _repo.UpdateAsync(existing);
-            await _repo.SaveChangesAsync();
-
-            return ApiResponse<SystemAccountDto>
-                .SuccessResponse(MapToDto(existing), "Updated successfully.");
+            catch (Exception ex)
+            {
+                return ApiResponse<SystemAccountDto>.ErrorResponse($"Operation failed: {ex.Message}");
+            }
         }
 
 

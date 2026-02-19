@@ -95,8 +95,6 @@ namespace Assignmen_PRN232__.Dto
 
         public string? AccountPassword { get; set; }
 
-        [Required]
-        [Range(1, 2)] // 1=Staff, 2=Lecturer
         public short AccountRole { get; set; }
     }
 }

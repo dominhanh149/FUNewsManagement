@@ -118,12 +118,13 @@ async function saveAccount() {
         return;
     }
 
+    // Field names must match SystemAccountSaveDto exactly (PascalCase)
     const body = {
-        accountId: id,
-        accountName: name,
-        accountEmail: email,
-        accountRole: role,
-        accountPassword: password ? password : null
+        AccountId: id,
+        AccountName: name,
+        AccountEmail: email,
+        AccountRole: role,
+        AccountPassword: password ? password : null
     };
 
     const btn = document.getElementById("btnSave");
