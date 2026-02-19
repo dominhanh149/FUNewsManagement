@@ -1,9 +1,21 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "E:\\Hoc\\PRN232\\AI_API\\",
+  "WorkspaceRootPath": "E:\\Hoc\\PRN232\\FUNewsManagement\\AI_API\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{29AF0FA3-6B5B-4DCD-8B8B-EE443F746B7C}|AI_API.csproj|e:\\hoc\\prn232\\ai_api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "AbsoluteMoniker": "D:0:0:{29AF0FA3-6B5B-4DCD-8B8B-EE443F746B7C}|AI_API.csproj|e:\\hoc\\prn232\\funewsmanagement\\ai_api\\models\\suggesttagsrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{29AF0FA3-6B5B-4DCD-8B8B-EE443F746B7C}|AI_API.csproj|solutionrelative:models\\suggesttagsrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{29AF0FA3-6B5B-4DCD-8B8B-EE443F746B7C}|AI_API.csproj|e:\\hoc\\prn232\\funewsmanagement\\ai_api\\models\\tagsuggestion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{29AF0FA3-6B5B-4DCD-8B8B-EE443F746B7C}|AI_API.csproj|solutionrelative:models\\tagsuggestion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{29AF0FA3-6B5B-4DCD-8B8B-EE443F746B7C}|AI_API.csproj|e:\\hoc\\prn232\\funewsmanagement\\ai_api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{29AF0FA3-6B5B-4DCD-8B8B-EE443F746B7C}|AI_API.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{29AF0FA3-6B5B-4DCD-8B8B-EE443F746B7C}|AI_API.csproj|e:\\hoc\\prn232\\funewsmanagement\\ai_api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{29AF0FA3-6B5B-4DCD-8B8B-EE443F746B7C}|AI_API.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
@@ -19,12 +31,51 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "SuggestTagsRequest.cs",
+              "DocumentMoniker": "E:\\Hoc\\PRN232\\FUNewsManagement\\AI_API\\Models\\SuggestTagsRequest.cs",
+              "RelativeDocumentMoniker": "Models\\SuggestTagsRequest.cs",
+              "ToolTip": "E:\\Hoc\\PRN232\\FUNewsManagement\\AI_API\\Models\\SuggestTagsRequest.cs",
+              "RelativeToolTip": "Models\\SuggestTagsRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-19T05:38:10.498Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TagSuggestion.cs",
+              "DocumentMoniker": "E:\\Hoc\\PRN232\\FUNewsManagement\\AI_API\\Models\\TagSuggestion.cs",
+              "RelativeDocumentMoniker": "Models\\TagSuggestion.cs",
+              "ToolTip": "E:\\Hoc\\PRN232\\FUNewsManagement\\AI_API\\Models\\TagSuggestion.cs",
+              "RelativeToolTip": "Models\\TagSuggestion.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-19T05:38:09.047Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\Hoc\\PRN232\\FUNewsManagement\\AI_API\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "E:\\Hoc\\PRN232\\FUNewsManagement\\AI_API\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-19T05:37:53.517Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "appsettings.json",
-              "DocumentMoniker": "E:\\Hoc\\PRN232\\AI_API\\appsettings.json",
+              "DocumentMoniker": "E:\\Hoc\\PRN232\\FUNewsManagement\\AI_API\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
-              "ToolTip": "E:\\Hoc\\PRN232\\AI_API\\appsettings.json",
+              "ToolTip": "E:\\Hoc\\PRN232\\FUNewsManagement\\AI_API\\appsettings.json",
               "RelativeToolTip": "appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2026-02-18T14:14:13.305Z",
               "EditorCaption": ""

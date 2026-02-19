@@ -133,22 +133,23 @@ window.editCategory = async function (id) {
     const res = await api.get(`/fe-api/Category/${id}`);
     console.log("Edit response:", res);
 
+    // ASP.NET Core serializes ParentCategoryID → parentCategoryID (capital D)
     const c = res.data ?? res;
-    const parentVal = (c.parentCategoryId ?? c.ParentCategoryId ?? "");
+    const parentVal = c.parentCategoryID ?? c.parentCategoryId ?? c.ParentCategoryID ?? c.ParentCategoryId ?? null;
     const parentInput = document.getElementById("parentId");
-    parentInput.value = parentVal === null ? "" : parentVal;
-    parentInput.dataset.original = parentVal === null ? "" : parentVal;
+
     const countRes = await api.get(`/fe-api/Category/${id}/article-count`);
     const count = countRes.data ?? countRes;
-    document.getElementById("parentId").disabled = (Number(count) > 0);
-    const categoryId = c.CategoryID || c.categoryID || c.categoryId || c.id || c.Id;
+    parentInput.disabled = (Number(count) > 0);
+
+    const categoryId = c.categoryID ?? c.CategoryID ?? c.categoryId ?? c.id;
 
     document.getElementById("categoryId").value = categoryId;
-    document.getElementById("categoryName").value = c.categoryName || c.CategoryName || "";
-    document.getElementById("categoryDesc").value = c.categoryDescription || c.CategoryDescription || c.categoryDesciption || "";
-    document.getElementById("parentId").value = c.parentCategoryId || c.ParentCategoryId || "";
-    document.getElementById("parentId").dataset.original = (c.parentCategoryId ?? c.ParentCategoryId ?? "");
-    document.getElementById("isActive").checked = !!(c.isActive || c.IsActive);
+    document.getElementById("categoryName").value = c.categoryName ?? c.CategoryName ?? "";
+    document.getElementById("categoryDesc").value = c.categoryDesciption ?? c.CategoryDesciption ?? c.categoryDescription ?? c.CategoryDescription ?? "";
+    parentInput.value = (parentVal === null || parentVal === undefined) ? "" : parentVal;
+    parentInput.dataset.original = (parentVal === null || parentVal === undefined) ? "" : String(parentVal);
+    document.getElementById("isActive").checked = !!(c.isActive ?? c.IsActive);
 
     modal.show();
 }
@@ -162,7 +163,6 @@ async function saveCategory() {
     const parentInput = document.getElementById("parentId");
     const originalParentRaw = (parentInput.dataset.original ?? "").toString();
 
-    let parentCategoryIdToSend;
     const msg = document.getElementById("modalMsg");
     msg.innerText = "";
 
@@ -170,19 +170,30 @@ async function saveCategory() {
         msg.innerText = "CategoryName and CategoryDescription are required.";
         return;
     }
-    if (parentRaw === "") {
-        parentCategoryIdToSend = originalParentRaw === "" ? null : Number(originalParentRaw);
+
+    // Normalize: chuỗi rỗng hoặc 0 → null (không có parent)
+    const toParentId = (raw) => {
+        if (raw === "" || raw === null || raw === undefined) return null;
+        const n = Number(raw);
+        return (isNaN(n) || n <= 0) ? null : n;
+    };
+
+    // Nếu field bị disabled (category có articles): giữ nguyên parent gốc
+    let parentCategoryIdToSend;
+    if (parentInput.disabled) {
+        parentCategoryIdToSend = toParentId(parentInput.dataset.original);
     } else {
-        parentCategoryIdToSend = Number(parentRaw);
+        parentCategoryIdToSend = toParentId(parentRaw);
     }
 
+    // Field names must match UpdateCategoryDto exactly (PascalCase)
+    // ASP.NET Core's System.Text.Json uses case-sensitive matching by default
     const body = {
-        categoryId: id,
-        categoryName: name,
-        categoryDesciption: desc,
-        categoryDescription: desc,
-        parentCategoryId: parentCategoryIdToSend,
-        isActive: isActive
+        CategoryID: id,
+        CategoryName: name,
+        CategoryDesciption: desc,
+        ParentCategoryID: parentCategoryIdToSend,
+        IsActive: isActive
     };
 
     console.log("Saving category:", body);

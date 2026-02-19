@@ -26,11 +26,40 @@ public class StaffTagsProxyController : ControllerBase
         return StatusCode((int)res.StatusCode, json);
     }
 
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var client = _http.CreateClient("CoreApi");
+        var res = await client.GetAsync($"/api/Tag/{id}");
+        var json = await res.Content.ReadAsStringAsync();
+        return StatusCode((int)res.StatusCode, json);
+    }
+
     [HttpGet("{id:int}/articles-list")]
     public async Task<IActionResult> GetArticlesList(int id)
     {
         var client = _http.CreateClient("CoreApi");
         var res = await client.GetAsync($"/api/Tag/{id}/articles-list");
+        var json = await res.Content.ReadAsStringAsync();
+        return StatusCode((int)res.StatusCode, json);
+    }
+
+    /// <summary>POST /fe-api/Tag – tạo tag mới</summary>
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] object body)
+    {
+        var client = _http.CreateClient("CoreApi");
+        var res = await client.PostAsJsonAsync("/api/Tag", body);
+        var json = await res.Content.ReadAsStringAsync();
+        return StatusCode((int)res.StatusCode, json);
+    }
+
+    /// <summary>PUT /fe-api/Tag/{id} – cập nhật tag</summary>
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, [FromBody] object body)
+    {
+        var client = _http.CreateClient("CoreApi");
+        var res = await client.PutAsJsonAsync($"/api/Tag/{id}", body);
         var json = await res.Content.ReadAsStringAsync();
         return StatusCode((int)res.StatusCode, json);
     }

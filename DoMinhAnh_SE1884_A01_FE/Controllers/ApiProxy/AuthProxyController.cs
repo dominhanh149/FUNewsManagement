@@ -65,6 +65,47 @@ public class AuthProxyController : ControllerBase
     public IActionResult Logout()
     {
         HttpContext.Session.Remove("access_token");
+        HttpContext.Session.Remove("refresh_token");
         return Ok(new { success = true });
+    }
+
+    /// <summary>
+    /// POST /fe-api/auth/refresh
+    /// Dùng refresh_token (từ session) để lấy access_token mới.
+    /// FE gọi proactively khi token sắp hết hạn.
+    /// </summary>
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh()
+    {
+        var refreshToken = HttpContext.Session.GetString("refresh_token");
+        if (string.IsNullOrWhiteSpace(refreshToken))
+            return Unauthorized(new { success = false, message = "No refresh token in session." });
+
+        var client = _http.CreateClient("CoreApi");
+        var payload = JsonSerializer.Serialize(new { RefreshToken = refreshToken });
+        var res = await client.PostAsync("/api/SystemAccounts/refresh",
+            new StringContent(payload, Encoding.UTF8, "application/json"));
+
+        var json = await res.Content.ReadAsStringAsync();
+
+        if (!res.IsSuccessStatusCode)
+        {
+            HttpContext.Session.Remove("access_token");
+            HttpContext.Session.Remove("refresh_token");
+            return StatusCode((int)res.StatusCode,
+                new { success = false, message = "Session expired. Please login again." });
+        }
+
+        using var doc = JsonDocument.Parse(json);
+        var root = doc.RootElement;
+        var newAccess  = root.TryGetProperty("access_token",  out var ap) ? ap.GetString() : null;
+        var newRefresh = root.TryGetProperty("refresh_token", out var rp) ? rp.GetString() : null;
+
+        if (!string.IsNullOrWhiteSpace(newAccess))
+            HttpContext.Session.SetString("access_token", newAccess);
+        if (!string.IsNullOrWhiteSpace(newRefresh))
+            HttpContext.Session.SetString("refresh_token", newRefresh);
+
+        return Ok(new { success = true, access_token = newAccess });
     }
 }

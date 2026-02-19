@@ -56,11 +56,11 @@ public class ApiAuthHandler : DelegatingHandler
         var refreshToken = ctx.Session.GetString("refresh_token");
         if (string.IsNullOrWhiteSpace(refreshToken)) return false;
 
-        // gọi Core API refresh
+        // ✅ URL đúng: /api/SystemAccounts/refresh
         var core = _httpClientFactory.CreateClient("CoreApi");
 
-        var payload = JsonSerializer.Serialize(new { refreshToken });
-        var res = await core.PostAsync("/api/auth/refresh",
+        var payload = JsonSerializer.Serialize(new { RefreshToken = refreshToken });
+        var res = await core.PostAsync("/api/SystemAccounts/refresh",
             new StringContent(payload, Encoding.UTF8, "application/json"), ct);
 
         if (!res.IsSuccessStatusCode) return false;
@@ -68,9 +68,9 @@ public class ApiAuthHandler : DelegatingHandler
         var json = await res.Content.ReadAsStringAsync(ct);
         using var doc = JsonDocument.Parse(json);
 
-        // map theo response bạn trả
-        var access = doc.RootElement.GetProperty("access_token").GetString();
-        var refresh = doc.RootElement.GetProperty("refresh_token").GetString();
+        var root = doc.RootElement;
+        var access = root.TryGetProperty("access_token", out var ap) ? ap.GetString() : null;
+        var refresh = root.TryGetProperty("refresh_token", out var rp) ? rp.GetString() : null;
 
         if (string.IsNullOrWhiteSpace(access) || string.IsNullOrWhiteSpace(refresh)) return false;
 

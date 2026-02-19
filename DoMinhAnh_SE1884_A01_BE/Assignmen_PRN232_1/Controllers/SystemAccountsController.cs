@@ -88,17 +88,19 @@ namespace Assignmen_PRN232_1.Controllers.Api
             var refreshToken = _jwt.GenerateRefreshToken();
             var refreshDays = _jwt.RefreshTokenDays;
 
-            // TODO (ASS2 chuẩn): lưu refreshToken xuống DB để revoke/rotate
-            // await _service.SaveRefreshTokenAsync(acc.AccountId, refreshToken, expiryDate)
-            var tokenEntity = new RefreshToken
+            // Admin account (id=0) lives only in appsettings — no DB row → skip FK insert
+            if (acc.AccountId != 0)
             {
-                AccountId = acc.AccountId,
-                Token = refreshToken,
-                CreatedAt = DateTime.UtcNow,
-                ExpiresAt = DateTime.UtcNow.AddDays(refreshDays)
-            };
-            _db.RefreshTokens.Add(tokenEntity);
-            await _db.SaveChangesAsync();
+                var tokenEntity = new RefreshToken
+                {
+                    AccountId = acc.AccountId,
+                    Token = refreshToken,
+                    CreatedAt = DateTime.UtcNow,
+                    ExpiresAt = DateTime.UtcNow.AddDays(refreshDays)
+                };
+                _db.RefreshTokens.Add(tokenEntity);
+                await _db.SaveChangesAsync();
+            }
 
             return Ok(new
             {
