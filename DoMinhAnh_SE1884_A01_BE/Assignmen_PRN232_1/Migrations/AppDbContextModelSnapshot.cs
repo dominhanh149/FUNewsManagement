@@ -22,6 +22,45 @@ namespace Assignmen_PRN232__.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Assignmen_PRN232__.Models.AuditLog", b =>
+                {
+                    b.Property<int>("AuditLogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuditLogId"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("AfterData")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeData")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EntityId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<short?>("UserId")
+                        .HasColumnType("smallint");
+
+                    b.HasKey("AuditLogId");
+
+                    b.ToTable("AuditLog", (string)null);
+                });
+
             modelBuilder.Entity("Assignmen_PRN232__.Models.Category", b =>
                 {
                     b.Property<short>("CategoryId")
@@ -99,6 +138,11 @@ namespace Assignmen_PRN232__.Migrations
                     b.Property<short?>("UpdatedById")
                         .HasColumnType("smallint")
                         .HasColumnName("UpdatedByID");
+
+                    b.Property<int>("ViewCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.HasKey("NewsArticleId");
 
