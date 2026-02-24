@@ -56,6 +56,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.NewsSource).HasMaxLength(400);
             entity.Property(e => e.NewsTitle).HasMaxLength(400);
             entity.Property(e => e.UpdatedById).HasColumnName("UpdatedByID");
+            entity.Property(e => e.ImageUrl).HasMaxLength(400);
             entity.Property(e => e.ViewCount)
             .HasDefaultValue(0);
             entity.HasOne(d => d.Category).WithMany(p => p.NewsArticles)

@@ -93,10 +93,14 @@ async function loadNews() {
         const source = n.newsSource ?? n.NewsSource ?? "";
         const category = n.categoryName ?? n.CategoryName ?? "";
         const isActive = (n.newsStatus ?? n.NewsStatus) === true;
+        const imgUrl = n.imageUrl ?? n.ImageUrl ?? "";
+        
+        const imgHtml = imgUrl ? `<img src="${imgUrl}" style="width:100px; height:60px; object-fit:cover; border-radius:4px" />` : `<span class="text-muted small">No Image</span>`;
 
         return `
       <tr>
         <td>${safe(id)}</td>
+        <td>${imgHtml}</td>
         <td>${safe(title)}</td>
         <td title="${safe(headline)}">${safe(headline.length > 60 ? headline.slice(0, 60) + "…" : headline)}</td>
         <td>${safe(source)}</td>
@@ -186,6 +190,7 @@ function openCreate() {
     document.getElementById("newsSource").value = "";
     document.getElementById("content").value = "";
     document.getElementById("imgPreview").innerHTML = ""; // Clear preview
+    document.getElementById("imageUrl").value = "";
     document.getElementById("isActive").checked = true;
     
     loadCategories();
@@ -210,6 +215,9 @@ window.editNews = async function (id) {
     if (contentEl) contentEl.value = n.newsContent ?? n.NewsContent ?? "";
     document.getElementById("imgPreview").innerHTML = ""; // Clear preview
 
+    const imgUrl = n.imageUrl ?? n.ImageUrl ?? "";
+    document.getElementById("imageUrl").value = imgUrl;
+
     document.getElementById("isActive").checked = !!(n.newsStatus ?? n.NewsStatus);
 
     await loadCategories();
@@ -233,6 +241,7 @@ async function saveNews() {
         Headline: document.getElementById("headline").value,
         NewsSource: document.getElementById("newsSource").value,
         NewsContent: document.getElementById("content").value,
+        ImageUrl: document.getElementById("imageUrl").value,
         CategoryID: Number(document.getElementById("categoryId").value),
         NewsStatus: document.getElementById("isActive").checked,
         TagIds: [...document.querySelectorAll("#tagList input:checked")].map(x => Number(x.value))
@@ -389,6 +398,12 @@ document.getElementById("btnUploadImg").onclick = async function () {
              const contentArea = document.getElementById("content");
              contentArea.value += `\n![${file.name}](${url})\n`;
              input.value = ""; 
+
+             // Nếu bài viết chưa có ImageUrl (ảnh bìa), tự động lấy ảnh content đầu tiên làm ảnh bìa luôn
+             const imgUrlEl = document.getElementById("imageUrl");
+             if (!imgUrlEl.value) {
+                 imgUrlEl.value = url;
+             }
              
              // Show preview
              document.getElementById("imgPreview").innerHTML = 
@@ -404,6 +419,13 @@ document.getElementById("btnUploadImg").onclick = async function () {
         btn.disabled = false;
     }
 };
+
+// Optionally remove btnUploadImg button click entirely, and use purely change event:
+document.getElementById("imgUpload").addEventListener("change", async function() {
+    if (this.files && this.files.length > 0) {
+        document.getElementById("btnUploadImg").click(); // Trigger upload
+    }
+});
 
 document.getElementById("btnNewsPrev")?.addEventListener("click", async () => {
     if (newsPageNumber > 1) newsPageNumber--;

@@ -93,6 +93,7 @@ namespace Assignmen_PRN232_1.Services
                         NewsSource = dto.NewsSource,
                         CategoryId = dto.CategoryId,
                         NewsStatus = dto.NewsStatus ?? false,
+                        ImageUrl = dto.ImageUrl,
                         CreatedById = dto.CreatedById
                     };
 
@@ -122,6 +123,7 @@ namespace Assignmen_PRN232_1.Services
                 existing.NewsSource = dto.NewsSource;
                 existing.CategoryId = dto.CategoryId;
                 existing.NewsStatus = dto.NewsStatus ?? existing.NewsStatus;
+                existing.ImageUrl = dto.ImageUrl;
                 existing.UpdatedById = dto.UpdatedById;
                 existing.ModifiedDate = dto.ModifiedDate ?? DateTime.UtcNow;
 
@@ -318,6 +320,7 @@ namespace Assignmen_PRN232_1.Services
                 CategoryName = x.Category?.CategoryName,
                 NewsStatus = x.NewsStatus,
                 ViewCount = x.ViewCount,
+                ImageUrl = x.ImageUrl,
                 CreatedById = x.CreatedById,
                 CreatedByName = x.CreatedBy?.AccountName,
                 UpdatedById = x.UpdatedById,

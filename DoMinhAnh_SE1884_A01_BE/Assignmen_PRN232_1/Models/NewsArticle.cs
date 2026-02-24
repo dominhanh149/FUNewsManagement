@@ -28,6 +28,8 @@ public partial class NewsArticle
     public DateTime? ModifiedDate { get; set; }
     public int ViewCount { get; set; }
 
+    public string? ImageUrl { get; set; }
+
     public virtual Category? Category { get; set; }
 
     public virtual SystemAccount? CreatedBy { get; set; }

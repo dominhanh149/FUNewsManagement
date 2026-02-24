@@ -38,6 +38,8 @@ namespace Assignmen_PRN232__.Dto
 
         public DateTime? ModifiedDate { get; set; }
 
+        public string? ImageUrl { get; set; }
+
         public ICollection<TagDto> Tags { get; set; } = new List<TagDto>();
     }
 
@@ -68,6 +70,10 @@ namespace Assignmen_PRN232__.Dto
         public short? UpdatedById { get; set; }
 
         public DateTime? ModifiedDate { get; set; }
+        
+        [StringLength(400, ErrorMessage = "ImageUrl cannot exceed 400 characters")]
+        public string? ImageUrl { get; set; }
+        
         public List<int> TagIds { get; set; }
 
     }
@@ -80,6 +86,7 @@ namespace Assignmen_PRN232__.Dto
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
         public short? CreatedById { get; set; }
+        public bool? Status { get; set; }
     }
 
     public class AuditLogSearchDto : BaseSearchDto
