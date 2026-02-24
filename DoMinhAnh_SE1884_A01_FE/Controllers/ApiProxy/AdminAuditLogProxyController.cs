@@ -14,7 +14,7 @@ public class AdminAuditLogProxyController : ControllerBase
     {
         var client = _http.CreateClient("CoreApi");
         var json = JsonSerializer.Serialize(body);
-        var res = await client.PostAsync("/api/NewsArticles/audit-log",
+        var res = await client.PostAsync("/api/AuditLog/search",
             new StringContent(json, Encoding.UTF8, "application/json"));
         var responseJson = await res.Content.ReadAsStringAsync();
         return StatusCode((int)res.StatusCode, responseJson);

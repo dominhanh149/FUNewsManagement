@@ -23,6 +23,7 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Tag> Tags { get; set; }
     public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
+    public virtual DbSet<AuditLog> AuditLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -133,6 +134,17 @@ public partial class AppDbContext : DbContext
                 .WithMany() // không cần navigation ở SystemAccount cũng được
                 .HasForeignKey(e => e.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<AuditLog>(entity =>
+        {
+            entity.ToTable("AuditLog");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Action).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.EntityType).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.EntityId).HasMaxLength(50);
+            entity.Property(e => e.PerformedByName).HasMaxLength(150);
+            entity.Property(e => e.Timestamp).HasColumnType("datetime");
         });
 
         OnModelCreatingPartial(modelBuilder);

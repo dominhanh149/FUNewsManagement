@@ -5,6 +5,7 @@ using Assignmen_PRN232__.Repositories.IRepositories;
 using Assignmen_PRN232_1.DTOs.Common;
 using Assignmen_PRN232_1.Services.IServices;
 using Mapster;
+using System.Text.Json;
 
 namespace Assignmen_PRN232_1.Services
 {
@@ -12,13 +13,16 @@ namespace Assignmen_PRN232_1.Services
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly ILogger<CategoryService> _logger;
+        private readonly IAuditLogService _audit;
 
         public CategoryService(
             ICategoryRepository categoryRepository,
-            ILogger<CategoryService> logger)
+            ILogger<CategoryService> logger,
+            IAuditLogService audit)
         {
             _categoryRepository = categoryRepository;
             _logger = logger;
+            _audit = audit;
         }
 
         #region Basic CRUD Operations
@@ -115,6 +119,11 @@ namespace Assignmen_PRN232_1.Services
 
                 var createdCategory = await _categoryRepository.CreateAsync(category);
 
+                // Audit log: Create
+                await _audit.LogAsync("Create", "Category", createdCategory.CategoryId.ToString(),
+                    null, JsonSerializer.Serialize(new { createdCategory.CategoryId, createdCategory.CategoryName, createdCategory.IsActive }),
+                    null, null);
+
                 var response = new CategoryResponseDto
                 {
                     CategoryID = createdCategory.CategoryId,
@@ -192,6 +201,12 @@ namespace Assignmen_PRN232_1.Services
 
                 await _categoryRepository.UpdateAsync(existingCategory);
 
+                // Audit log: Update
+                await _audit.LogAsync("Update", "Category", existingCategory.CategoryId.ToString(),
+                    JsonSerializer.Serialize(new { existingCategory.CategoryId, existingCategory.CategoryName }),
+                    JsonSerializer.Serialize(new { existingCategory.CategoryId, existingCategory.CategoryName, existingCategory.IsActive }),
+                    null, null);
+
                 var articleCount = await _categoryRepository.GetArticleCountAsync(updateDto.CategoryID);
 
                 var response = new CategoryResponseDto
@@ -249,6 +264,11 @@ namespace Assignmen_PRN232_1.Services
                 }
 
                 await _categoryRepository.DeleteAsync(id);
+
+                // Audit log: Delete
+                await _audit.LogAsync("Delete", "Category", id.ToString(),
+                    JsonSerializer.Serialize(new { category.CategoryId, category.CategoryName }),
+                    null, null, null);
 
                 return ApiResponse.SuccessResponse("Category deleted successfully");
             }

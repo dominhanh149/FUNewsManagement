@@ -5,6 +5,7 @@ using Assignmen_PRN232__.Repositories.IRepositories;
 using Assignmen_PRN232_1.DTOs.Common;
 using Assignmen_PRN232_1.Services.IServices;
 using Microsoft.Extensions.Configuration;
+using System.Text.Json;
 
 namespace Assignmen_PRN232_1.Services
 {
@@ -12,13 +13,16 @@ namespace Assignmen_PRN232_1.Services
     {
         private readonly ISystemAccountRepository _repo;
         private readonly IConfiguration _config;
+        private readonly IAuditLogService _audit;
 
         public SystemAccountService(
             ISystemAccountRepository repo,
-            IConfiguration config)
+            IConfiguration config,
+            IAuditLogService audit)
         {
             _repo = repo;
             _config = config;
+            _audit = audit;
         }
 
         public async Task<PagingDto<SystemAccountDto>> GetListPagingAsync(SystemAccountSearchDto dto)
@@ -84,6 +88,11 @@ namespace Assignmen_PRN232_1.Services
                     await _repo.AddAsync(entity);
                     await _repo.SaveChangesAsync();
 
+                    // Audit log: Create
+                    await _audit.LogAsync("Create", "SystemAccount", entity.AccountId.ToString(),
+                        null, JsonSerializer.Serialize(new { entity.AccountId, entity.AccountEmail, entity.AccountRole }),
+                        null, null);
+
                     return ApiResponse<SystemAccountDto>
                         .SuccessResponse(MapToDto(entity), "Created successfully.");
                 }
@@ -102,6 +111,12 @@ namespace Assignmen_PRN232_1.Services
 
                 await _repo.UpdateAsync(existing);
                 await _repo.SaveChangesAsync();
+
+                // Audit log: Update
+                await _audit.LogAsync("Update", "SystemAccount", existing.AccountId.ToString(),
+                    JsonSerializer.Serialize(new { existing.AccountId, existing.AccountEmail }),
+                    JsonSerializer.Serialize(new { existing.AccountId, existing.AccountEmail, existing.AccountRole }),
+                    null, null);
 
                 return ApiResponse<SystemAccountDto>
                     .SuccessResponse(MapToDto(existing), "Updated successfully.");
@@ -125,6 +140,11 @@ namespace Assignmen_PRN232_1.Services
 
             await _repo.DeleteAsync(acc);
             await _repo.SaveChangesAsync();
+
+            // Audit log: Delete
+            await _audit.LogAsync("Delete", "SystemAccount", id.ToString(),
+                JsonSerializer.Serialize(new { acc.AccountId, acc.AccountEmail, acc.AccountRole }),
+                null, null, null);
 
             return ApiResponse<bool>.SuccessResponse(true, "Deleted successfully.");
         }

@@ -5,6 +5,7 @@ using Assignmen_PRN232__.Repositories.IRepositories;
 using Assignmen_PRN232_1.DTOs.Common;
 using Assignmen_PRN232_1.Services.IServices;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace Assignmen_PRN232_1.Services
 {
@@ -13,12 +14,14 @@ namespace Assignmen_PRN232_1.Services
         private readonly INewsArticleRepository _newsRepo;
         private readonly ITagRepository _tagRepo;
         private readonly AppDbContext _appDbContext;
+        private readonly IAuditLogService _auditLog;
 
-        public NewsArticleService(INewsArticleRepository newsRepo, ITagRepository tagRepo, AppDbContext appDbContext)
+        public NewsArticleService(INewsArticleRepository newsRepo, ITagRepository tagRepo, AppDbContext appDbContext, IAuditLogService auditLog)
         {
             _newsRepo = newsRepo;
             _tagRepo = tagRepo;
             _appDbContext = appDbContext;
+            _auditLog = auditLog;
         }
 
         public async Task<IEnumerable<NewsArticleDto>> GetAllAsync()
@@ -107,6 +110,17 @@ namespace Assignmen_PRN232_1.Services
                     }
 
                     var created = await _newsRepo.GetByIdAsync(entity.NewsArticleId);
+
+                    // Audit log: CREATE
+                    await _auditLog.LogAsync(
+                        action: "Create",
+                        entityType: "NewsArticle",
+                        entityId: entity.NewsArticleId,
+                        dataBefore: null,
+                        dataAfter: JsonSerializer.Serialize(new { entity.NewsArticleId, entity.NewsTitle, entity.CategoryId, entity.NewsStatus }),
+                        performedById: dto.CreatedById,
+                        performedByName: null);
+
                     return ApiResponse<NewsArticleDto>.SuccessResponse(
                         MapToDto(created ?? entity),
                         "Created successfully.");
@@ -116,6 +130,12 @@ namespace Assignmen_PRN232_1.Services
                 var existing = await _newsRepo.GetByIdAsync(dto.NewsArticleId);
                 if (existing == null)
                     return ApiResponse<NewsArticleDto>.ErrorResponse("NewsArticle not found.");
+
+                // Capture BEFORE state for audit
+                var beforeJson = JsonSerializer.Serialize(new {
+                    existing.NewsArticleId, existing.NewsTitle, existing.CategoryId,
+                    existing.NewsStatus, existing.ImageUrl
+                });
 
                 existing.NewsTitle = dto.NewsTitle;
                 existing.Headline = dto.Headline ?? existing.Headline;
@@ -137,6 +157,20 @@ namespace Assignmen_PRN232_1.Services
                 }
 
                 var updated = await _newsRepo.GetByIdAsync(existing.NewsArticleId);
+
+                // Audit log: UPDATE
+                await _auditLog.LogAsync(
+                    action: "Update",
+                    entityType: "NewsArticle",
+                    entityId: existing.NewsArticleId,
+                    dataBefore: beforeJson,
+                    dataAfter: JsonSerializer.Serialize(new {
+                        existing.NewsArticleId, existing.NewsTitle, existing.CategoryId,
+                        existing.NewsStatus, existing.ImageUrl
+                    }),
+                    performedById: dto.UpdatedById,
+                    performedByName: null);
+
                 return ApiResponse<NewsArticleDto>.SuccessResponse(
                     MapToDto(updated ?? existing),
                     "Updated successfully.");
@@ -155,6 +189,11 @@ namespace Assignmen_PRN232_1.Services
                 if (entity == null)
                     return ApiResponse<bool>.ErrorResponse("NewsArticle not found.");
 
+                // Capture BEFORE state for audit
+                var beforeJson = JsonSerializer.Serialize(new {
+                    entity.NewsArticleId, entity.NewsTitle, entity.CategoryId, entity.NewsStatus
+                });
+
                 // delete join table NewsTag: EF many-to-many => clear Tags trước khi delete
                 if (entity.Tags != null && entity.Tags.Count > 0)
                 {
@@ -165,6 +204,16 @@ namespace Assignmen_PRN232_1.Services
 
                 await _newsRepo.DeleteAsync(entity);
                 await _newsRepo.SaveChangesAsync();
+
+                // Audit log: DELETE (no updatedById in delete, pass null)
+                await _auditLog.LogAsync(
+                    action: "Delete",
+                    entityType: "NewsArticle",
+                    entityId: id,
+                    dataBefore: beforeJson,
+                    dataAfter: null,
+                    performedById: null,
+                    performedByName: null);
 
                 return ApiResponse<bool>.SuccessResponse(true, "Deleted successfully.");
             }

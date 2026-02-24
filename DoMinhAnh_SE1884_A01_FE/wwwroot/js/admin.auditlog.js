@@ -1,4 +1,4 @@
-// admin.auditlog.js
+// admin.auditlog.js — full AuditLog table (Action / Before / After JSON)
 
 let auditPage = 1;
 const auditPageSize = 15;
@@ -14,25 +14,25 @@ async function loadAccounts() {
             opt.textContent = `${a.accountName ?? ''} (${a.accountEmail ?? ''})`;
             sel.appendChild(opt);
         });
-    } catch (_) { /* nếu lỗi: bỏ qua */ }
+    } catch (_) { /* ignore */ }
 }
 
 async function loadAuditLog() {
-    const title      = document.getElementById('filterTitle').value.trim();
-    const editorId   = document.getElementById('filterEditor').value;
-    const fromDate   = document.getElementById('filterFrom').value;
-    const toDate     = document.getElementById('filterTo').value;
-    const onlyMod    = document.getElementById('filterOnlyMod').checked;
+    const entityType  = document.getElementById('filterEntityType').value.trim();
+    const action      = document.getElementById('filterAction').value.trim();
+    const editorId    = document.getElementById('filterEditor').value;
+    const fromDate    = document.getElementById('filterFrom').value;
+    const toDate      = document.getElementById('filterTo').value;
 
     const body = {
         PageNumber: auditPage,
-        PageSize: auditPageSize,
+        PageSize:   auditPageSize,
     };
-    if (title)    body.Title       = title;
-    if (editorId) body.UpdatedById = Number(editorId);
-    if (fromDate) body.FromDate    = fromDate;
-    if (toDate)   body.ToDate      = toDate;
-    if (onlyMod)  body.OnlyModified = true;
+    if (entityType) body.EntityType     = entityType;
+    if (action)     body.Action         = action;
+    if (editorId)   body.PerformedById  = Number(editorId);
+    if (fromDate)   body.FromDate       = fromDate;
+    if (toDate)     body.ToDate         = toDate;
 
     const loadingEl = document.getElementById('loading');
     const tableEl   = document.getElementById('auditTable');
@@ -40,40 +40,43 @@ async function loadAuditLog() {
     tableEl.classList.add('d-none');
 
     try {
-        const res = await api.post('/fe-api/admin/audit-log', body);
+        const res    = await api.post('/fe-api/admin/audit-log', body);
         const paging = res?.data ?? res;
         const items  = paging?.items ?? [];
         const total  = paging?.totalCount ?? 0;
 
         const tbody = document.getElementById('auditBody');
         tbody.innerHTML = items.map(x => {
-            const status = x.newsStatus
-                ? '<span class="badge bg-success">Active</span>'
-                : '<span class="badge bg-secondary">Inactive</span>';
-            const createdDate  = x.createdDate   ? new Date(x.createdDate).toLocaleString('vi-VN')   : '—';
-            const modifiedDate = x.modifiedDate  ? new Date(x.modifiedDate).toLocaleString('vi-VN')  : '—';
-            const editor       = x.updatedByName || (x.updatedById ? `#${x.updatedById}` : '<em class="text-muted">Not edited</em>');
+            const actionBadge = {
+                Create: '<span class="badge bg-success">Create</span>',
+                Update: '<span class="badge bg-primary">Update</span>',
+                Delete: '<span class="badge bg-danger">Delete</span>',
+            }[x.action] ?? `<span class="badge bg-secondary">${escHtml(x.action)}</span>`;
+
+            const ts = x.timestamp ? new Date(x.timestamp).toLocaleString('vi-VN') : '—';
+            const performer = escHtml(x.performedByName ?? (x.performedById ? `#${x.performedById}` : '—'));
+
+            const before = x.dataBefore
+                ? `<button class="btn btn-sm btn-outline-secondary py-0 px-1" onclick='showJson(${JSON.stringify(x.dataBefore)})'>Before</button>`
+                : '<span class="text-muted small">—</span>';
+
+            const after = x.dataAfter
+                ? `<button class="btn btn-sm btn-outline-primary py-0 px-1" onclick='showJson(${JSON.stringify(x.dataAfter)})'>After</button>`
+                : '<span class="text-muted small">—</span>';
+
             return `
             <tr>
-                <td class="text-muted small font-monospace">${x.newsArticleId ?? ''}</td>
-                <td>
-                    <div class="fw-semibold">${escHtml(x.newsTitle ?? x.headline ?? '')}</div>
-                    <small class="text-muted">${escHtml(x.categoryName ?? '—')}</small>
-                </td>
-                <td>${status}</td>
-                <td>
-                    <div>${escHtml(x.createdByName ?? '—')}</div>
-                    <small class="text-muted">${createdDate}</small>
-                </td>
-                <td>
-                    <div class="fw-semibold text-primary">${editor}</div>
-                    <small class="text-muted">${modifiedDate}</small>
-                </td>
-                <td class="text-center">${x.viewCount ?? 0}</td>
+                <td class="px-3 text-muted small font-monospace">${escHtml(x.id?.toString() ?? '')}</td>
+                <td>${actionBadge}</td>
+                <td class="small">${escHtml(x.entityType ?? '')}</td>
+                <td class="small font-monospace text-truncate" style="max-width:140px" title="${escHtml(x.entityId ?? '')}">${escHtml(x.entityId ?? '—')}</td>
+                <td>${performer}</td>
+                <td class="small text-muted">${ts}</td>
+                <td class="text-center">${before}</td>
+                <td class="text-center">${after}</td>
             </tr>`;
         }).join('');
 
-        // paging info
         document.getElementById('pagingInfo').textContent =
             `Page ${auditPage} | ${auditPageSize} per page | Total ${total}`;
         document.getElementById('btnPrev').disabled = auditPage <= 1;
@@ -82,27 +85,31 @@ async function loadAuditLog() {
         tableEl.classList.remove('d-none');
     } catch (e) {
         document.getElementById('auditBody').innerHTML =
-            `<tr><td colspan="6" class="text-danger text-center">Error: ${escHtml(e.message)}</td></tr>`;
+            `<tr><td colspan="8" class="text-danger text-center">Error: ${escHtml(e.message)}</td></tr>`;
         tableEl.classList.remove('d-none');
     } finally {
         loadingEl.classList.add('d-none');
     }
 }
 
+function showJson(raw) {
+    try {
+        const pretty = JSON.stringify(JSON.parse(raw), null, 2);
+        document.getElementById('jsonModalBody').textContent = pretty;
+    } catch {
+        document.getElementById('jsonModalBody').textContent = raw;
+    }
+    new bootstrap.Modal(document.getElementById('jsonModal')).show();
+}
+
 function escHtml(s) {
     return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-document.getElementById('btnSearch').addEventListener('click', () => {
-    auditPage = 1;
-    loadAuditLog();
-});
+document.getElementById('btnSearch').addEventListener('click', () => { auditPage = 1; loadAuditLog(); });
 document.getElementById('btnReset').addEventListener('click', () => {
-    document.getElementById('filterTitle').value   = '';
-    document.getElementById('filterEditor').value  = '';
-    document.getElementById('filterFrom').value    = '';
-    document.getElementById('filterTo').value      = '';
-    document.getElementById('filterOnlyMod').checked = false;
+    ['filterEntityType','filterAction','filterFrom','filterTo'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('filterEditor').value = '';
     auditPage = 1;
     loadAuditLog();
 });
