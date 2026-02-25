@@ -127,7 +127,7 @@ async function loadNews() {
 
     // ✅ BƯỚC 2: Gọi API ngầm để lấy data mới nhất
     try {
-        const res = await api.post("/fe-api/staff/news/paging", body);
+        const res = await api.post("/fe-api/staff/news/paging", body, { background: true });
         const paging = unwrapNewsPaging(res);
         const items = paging?.items ?? [];
 

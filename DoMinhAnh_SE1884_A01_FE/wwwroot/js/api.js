@@ -7,6 +7,18 @@
  */
 window.api = (() => {
     const baseUrl = document.querySelector('meta[name="fe-api"]')?.content ?? "";
+    let activeRequests = 0;
+
+    // ── Global Spinner Logic ───────────────────────────────────────────────
+    function showGlobalSpinner() {
+        const spinner = document.getElementById('globalSpinner');
+        if (spinner) spinner.classList.remove('d-none');
+    }
+
+    function hideGlobalSpinner() {
+        const spinner = document.getElementById('globalSpinner');
+        if (spinner) spinner.classList.add('d-none');
+    }
 
     // ── JWT decode (không verify, chỉ đọc exp) ─────────────────────────────
     function decodeJwtExp(token) {
@@ -55,9 +67,15 @@ window.api = (() => {
 
     // ── Core request ────────────────────────────────────────────────────────
     async function request(path, options = {}) {
-        // Options: enableCache (default true for GET), ...
+        // Options: enableCache (default true for GET), background (default false), ...
         const method = options.method || "GET";
         const enableCache = options.enableCache ?? (method === "GET");
+        const isBackground = options.background === true;
+        
+        if (!isBackground) {
+            activeRequests++;
+            if (activeRequests === 1) showGlobalSpinner();
+        }
         
         // Key generation for cache
         const cacheKey = enableCache 
@@ -146,6 +164,14 @@ window.api = (() => {
             if (typeof window.showToast === 'function')
                 window.showToast(`Lỗi kết nối: Không thể liên lạc với máy chủ. Vui lòng thử lại.`, 'error');
             throw err;
+        } finally {
+            if (!isBackground) {
+                activeRequests--;
+                if (activeRequests <= 0) {
+                    activeRequests = 0;
+                    hideGlobalSpinner();
+                }
+            }
         }
     }
 
@@ -183,11 +209,10 @@ window.api = (() => {
     }
 
     return {
-        get:        (path)        => request(path, { method: "GET" }),
-        post:       (path, body)  => request(path, { method: "POST",  body: (body instanceof FormData) ? body : JSON.stringify(body) }),
-        // ✅ postCached: POST nhưng LƯU kết quả vào localStorage và ĐỌC lại khi API lỗi
-        postCached: (path, body)  => request(path, { method: "POST",  body: JSON.stringify(body), enableCache: true }),
-        put:        (path, body)  => request(path, { method: "PUT",   body: (body instanceof FormData) ? body : JSON.stringify(body) }),
-        del:        (path)        => request(path, { method: "DELETE" })
+        get:        (path, opt={})        => request(path, { method: "GET", ...opt }),
+        post:       (path, body, opt={})  => request(path, { method: "POST",  body: (body instanceof FormData) ? body : JSON.stringify(body), ...opt }),
+        postCached: (path, body, opt={})  => request(path, { method: "POST",  body: JSON.stringify(body), enableCache: true, ...opt }),
+        put:        (path, body, opt={})  => request(path, { method: "PUT",   body: (body instanceof FormData) ? body : JSON.stringify(body), ...opt }),
+        del:        (path, opt={})        => request(path, { method: "DELETE", ...opt })
     };
 })();
