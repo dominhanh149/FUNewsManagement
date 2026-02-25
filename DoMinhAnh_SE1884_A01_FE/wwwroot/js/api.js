@@ -124,18 +124,22 @@ window.api = (() => {
             return data;
 
         } catch (err) {
-            // Network error / Offline
+            // Network error / Offline (sau khi Polly đã retry hết lượt)
             if (enableCache && cacheKey) {
                 const cached = localStorage.getItem(cacheKey);
                 if (cached) {
                     try {
                         const parsed = JSON.parse(cached);
                         console.warn(`[Offline Mode] Serving cached data for ${path}`);
-                        // Notify user visually if needed? (Banner is handled by site.js)
+                        if (typeof window.showToast === 'function')
+                            window.showToast('Không thể kết nối API. Đang hiển thị dữ liệu cache.', 'warning');
                         return parsed.data;
                     } catch {}
                 }
             }
+            // Không có cache → báo lỗi rõ
+            if (typeof window.showToast === 'function')
+                window.showToast(`Lỗi kết nối: Không thể liên lạc với máy chủ. Vui lòng thử lại.`, 'error');
             throw err;
         }
     }
@@ -151,11 +155,16 @@ window.api = (() => {
 
         if (data && data.success === false) {
             const msg = data.message || data.Message || "Request failed";
+            if (typeof window.showToast === 'function')
+                window.showToast(msg, 'error');
             throw new Error(msg);
         }
 
         if (!res.ok && (!data || data.success === undefined)) {
             const msg = (data && (data.message || data.Message)) || res.statusText;
+            // 5xx → lỗi máy chủ
+            if (res.status >= 500 && typeof window.showToast === 'function')
+                window.showToast(`Lỗi máy chủ (${res.status}): ${msg}`, 'error');
             throw new Error(msg);
         }
 

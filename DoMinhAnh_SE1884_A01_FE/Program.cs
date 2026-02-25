@@ -22,7 +22,13 @@ builder.Services.AddTransient<ApiAuthHandler>();
 static IAsyncPolicy<HttpResponseMessage> RetryPolicy()
     => HttpPolicyExtensions
         .HandleTransientHttpError()
-        .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromMilliseconds(200 * retryAttempt));
+        .WaitAndRetryAsync(1,
+            retryAttempt => TimeSpan.FromMilliseconds(200 * retryAttempt),
+            onRetry: (outcome, timespan, retryCount, context) =>
+            {
+                var reason = outcome.Exception?.Message ?? outcome.Result?.StatusCode.ToString();
+                Console.WriteLine($"⚠️ [Polly] Retry #{retryCount} after {timespan.TotalMilliseconds}ms — Reason: {reason}");
+            });
 
 builder.Services.AddHttpClient("CoreApi", client =>
 {
@@ -47,6 +53,16 @@ builder.Services.AddHttpClient("AiApi", client =>
 })
 .AddHttpMessageHandler<ApiAuthHandler>()
 .AddPolicyHandler(RetryPolicy());
+
+// Self-Refresh client (dùng bởi CacheRefreshWorker để warm up cache)
+builder.Services.AddHttpClient("SelfRefresh", client =>
+{
+    var host = builder.Configuration["SelfRefresh:BaseUrl"] ?? "https://localhost:7024";
+    client.BaseAddress = new Uri(host);
+});
+
+// ✅ Background Worker: Làm mới cache mỗi 6 giờ (test: 30s trong appsettings.Development.json)
+builder.Services.AddHostedService<CacheRefreshWorker>();
 
 var app = builder.Build();
 

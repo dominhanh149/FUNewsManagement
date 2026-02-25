@@ -1,4 +1,55 @@
 ﻿(function () {
+    // ── Global Toast Notification ────────────────────────────────────────────
+    /**
+     * showToast(message, type)
+     * type: 'error' | 'warning' | 'success' | 'info'
+     * Hiện toast góc trên phải màn hình, tự đóng sau 4 giây.
+     */
+    window.showToast = function (message, type = 'error') {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+
+        const icons = {
+            error:   'bi-x-circle-fill',
+            warning: 'bi-exclamation-triangle-fill',
+            success: 'bi-check-circle-fill',
+            info:    'bi-info-circle-fill'
+        };
+        const colors = {
+            error:   '#dc3545',
+            warning: '#fd7e14',
+            success: '#198754',
+            info:    '#0d6efd'
+        };
+
+        const id = 'toast_' + Date.now();
+        const color = colors[type] || colors.info;
+        const icon  = icons[type]  || icons.info;
+
+        const toastEl = document.createElement('div');
+        toastEl.id = id;
+        toastEl.className = 'toast align-items-center text-white border-0 shadow';
+        toastEl.setAttribute('role', 'alert');
+        toastEl.setAttribute('aria-live', 'assertive');
+        toastEl.style.cssText = `background-color: ${color}; min-width: 280px; max-width: 380px;`;
+        toastEl.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center gap-2" style="font-size:0.9rem;">
+                    <i class="bi ${icon} flex-shrink-0" style="font-size:1.1rem;"></i>
+                    <span>${message}</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+
+        container.appendChild(toastEl);
+        const bsToast = new bootstrap.Toast(toastEl, { delay: 4000 });
+        bsToast.show();
+
+        // Dọn DOM sau khi ẩn
+        toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
+    };
+
     function getUser() {
         try {
             return JSON.parse(localStorage.getItem("funews_user"));
@@ -61,19 +112,12 @@
 
     window.addEventListener('online', () => {
         handleConnectionable();
-        // Show toast using existing showToast if available (from signalr-client or global)
-        // We can dispatch a custom event or check for global function
-        const toastContainer = document.getElementById("toastContainer");
-        if(toastContainer) {
-            // Manual toast creation or reusing signalr's logic if exposed
-            // For now, simple console log
-            console.log("Back Online");
-        }
+        showToast('Kết nối mạng đã được khôi phục!', 'success');
     });
 
     window.addEventListener('offline', () => {
         handleConnectionable();
-        console.log("Went Offline");
+        showToast('Mất kết nối mạng. Đang dùng dữ liệu cache.', 'warning');
     });
 
     document.addEventListener("DOMContentLoaded", () => {
