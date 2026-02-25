@@ -94,6 +94,29 @@
                     <a class="btn btn-outline-light btn-sm" href="/Auth/Login">Login</a>
                 </li>
 
+                <!-- 🔔 Notification Bell -->
+                <li class="nav-item dropdown" id="navNotif">
+                    <a class="nav-link position-relative px-2" href="#" role="button"
+                       data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"
+                       id="notifBell" title="Thông báo">
+                        <i class="bi bi-bell-fill fs-5"></i>
+                        <span id="notifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
+                              style="font-size:.65rem;">0</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end p-0 shadow" id="notifDropdown"
+                         style="width:340px; max-height:420px; overflow-y:auto;">
+                        <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom bg-light">
+                            <span class="fw-semibold" style="font-size:.9rem">🔔 Thông báo mới</span>
+                            <button class="btn btn-link btn-sm text-muted p-0" onclick="clearNotifications()" style="font-size:.8rem">Xóa tất cả</button>
+                        </div>
+                        <ul class="list-unstyled mb-0" id="notifList">
+                            <li class="text-center text-muted py-3" id="notifEmpty" style="font-size:.85rem">
+                                Chưa có thông báo nào.
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
                 <!-- Logged-in -->
                 <li class="nav-item dropdown d-none" id="navUser">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -116,7 +139,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/api.js?v=4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
-    <script src="~/js/signalr-client.js?v=4"></script>
+    <script src="~/js/signalr-client.js?v=5"></script>
     <script src="~/js/site.js?v=3"></script>
     @RenderSection("Scripts", required: false)
 </body>
