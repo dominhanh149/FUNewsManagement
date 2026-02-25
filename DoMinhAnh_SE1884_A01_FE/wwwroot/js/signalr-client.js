@@ -24,7 +24,7 @@ async function startSignalR() {
         if (_signalRRetryCount === 1) {
             // Chỉ hiện toast 1 lần duy nhất (lần đầu fail)
             if (typeof window.showToast === 'function')
-                window.showToast("SignalR: Connection Failed (See Console)", "error");
+                window.showToast("SignalR: Connection Failed", "error");
         }
 
         // Retry tối đa 3 lần với backoff (5s, 10s, 15s)

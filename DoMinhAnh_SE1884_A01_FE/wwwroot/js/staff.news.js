@@ -68,60 +68,156 @@ function updateNewsPagerButtons() {
     }
 }
 
+// ✅ Cache key cố định — Offline Mode
+const NEWS_OFFLINE_CACHE_KEY = 'funews_offline_news_paging';
+
+// Ẩn/hiện toàn bộ nút khi Offline Mode
+function setOfflineMode(isOffline) {
+    // Ẩn nút Create và Search
+    const btnCreate = document.getElementById('btnCreate');
+    const btnSearch = document.getElementById('btnSearch');
+    if (btnCreate) btnCreate.style.display = isOffline ? 'none' : '';
+    if (btnSearch) btnSearch.style.display = isOffline ? 'none' : '';
+
+    // Hiện/ẩn banner offline
+    let banner = document.getElementById('offlineModeBar');
+    if (isOffline && !banner) {
+        banner = document.createElement('div');
+        banner.id = 'offlineModeBar';
+        banner.className = 'alert alert-warning d-flex align-items-center gap-2 mb-3 py-2';
+        banner.innerHTML = `
+            <i class="bi bi-database-fill-slash"></i>
+            <span><strong>Offline Mode</strong> — Đang hiển thị dữ liệu cache.</span>`;
+        const h3 = document.querySelector('h3');
+        if (h3) h3.insertAdjacentElement('afterend', banner);
+    } else if (!isOffline && banner) {
+        banner.remove();
+    }
+}
+
 async function loadNews() {
     const keyword = document.getElementById("keyword").value.trim();
 
     const body = {
         title: keyword || null,
-        pageNumber: newsPageNumber,   // ✅ paging thật
+        pageNumber: newsPageNumber,
         pageSize: newsPageSize
     };
 
-    const res = await api.post("/fe-api/staff/news/paging", body);
-    const paging = unwrapNewsPaging(res);
+    // ✅ BƯỚC 1: Hiện cache NGAY LẬP TỨC (0ms) trước khi gọi API
+    // → Người dùng thấy data ngay, không cần đợi network
+    let hasCache = false;
+    if (newsPageNumber === 1 && !keyword) {
+        try {
+            const raw = localStorage.getItem(NEWS_OFFLINE_CACHE_KEY);
+            if (raw) {
+                const cached = JSON.parse(raw);
+                const items = cached.items ?? [];
+                if (items.length > 0) {
+                    newsLastItemsCount = items.length;
+                    newsLastTotal = cached.totalCount ?? null;
+                    renderNewsTable(items, false); // Hiện với đầy đủ buttons (tạm thời)
+                    setNewsPagingInfo();
+                    updateNewsPagerButtons();
+                    hasCache = true;
+                }
+            }
+        } catch { /* ignore */ }
+    }
 
-    const items = paging?.items ?? [];
-    newsLastItemsCount = items.length;
-    newsLastTotal = paging?.totalCount ?? paging?.TotalCount ?? null;
+    // ✅ BƯỚC 2: Gọi API ngầm để lấy data mới nhất
+    try {
+        const res = await api.post("/fe-api/staff/news/paging", body);
+        const paging = unwrapNewsPaging(res);
+        const items = paging?.items ?? [];
 
+        newsLastItemsCount = items.length;
+        newsLastTotal = paging?.totalCount ?? paging?.TotalCount ?? null;
+
+        // Cập nhật cache với data mới
+        if (newsPageNumber === 1 && !keyword && items.length > 0) {
+            try {
+                localStorage.setItem(NEWS_OFFLINE_CACHE_KEY, JSON.stringify({
+                    ts: Date.now(),
+                    items,
+                    totalCount: newsLastTotal
+                }));
+            } catch { /* ignore */ }
+        }
+
+        // Thay thế bảng bằng data mới nhất (online mode)
+        setOfflineMode(false);
+        renderNewsTable(items, false);
+        setNewsPagingInfo();
+        updateNewsPagerButtons();
+
+    } catch (err) {
+        // API lỗi → chuyển sang Offline Mode
+        if (hasCache) {
+            // Đã hiện cache rồi → chỉ cần chuyển sang read-only
+            const raw = localStorage.getItem(NEWS_OFFLINE_CACHE_KEY);
+            const cached = JSON.parse(raw);
+            setOfflineMode(true);
+            renderNewsTable(cached.items ?? [], true);
+            setNewsPagingInfo();
+            updateNewsPagerButtons();
+            if (typeof window.showToast === 'function')
+                window.showToast('📦 Đang hiển thị dữ liệu cache (Offline Mode)', 'warning');
+        } else {
+            // Không có cache → hiện thông báo lỗi
+            const tb = document.getElementById("tbNews");
+            tb.innerHTML = `
+                <tr>
+                    <td colspan="8" class="text-center text-danger py-4">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Không thể tải dữ liệu. Vui lòng kiểm tra kết nối và thử lại.
+                    </td>
+                </tr>`;
+        }
+    }
+}
+
+
+function renderNewsTable(items, isOffline = false) {
     const tb = document.getElementById("tbNews");
     tb.innerHTML = items.map(n => {
         const id = n.newsArticleId ?? n.NewsArticleId ?? n.newsArticleID ?? n.NewsArticleID;
-
         const title = n.newsTitle ?? n.NewsTitle ?? "";
         const headline = n.headline ?? n.Headline ?? "";
         const source = n.newsSource ?? n.NewsSource ?? "";
         const category = n.categoryName ?? n.CategoryName ?? "";
         const isActive = (n.newsStatus ?? n.NewsStatus) === true;
         const imgUrl = n.imageUrl ?? n.ImageUrl ?? "";
-        
-        const imgHtml = imgUrl ? `<img src="${imgUrl}" style="width:100px; height:60px; object-fit:cover; border-radius:4px" />` : `<span class="text-muted small">No Image</span>`;
+        const imgHtml = imgUrl
+            ? `<img src="${imgUrl}" style="width:100px; height:60px; object-fit:cover; border-radius:4px" />`
+            : `<span class="text-muted small">No Image</span>`;
+
+        // Khi offline: ẩn cột Actions hoàn toàn
+        const actionsHtml = isOffline ? '' : `
+            <td>
+              <button class="btn btn-sm btn-outline-primary" onclick="editNews('${id}')">Edit</button>
+              <button class="btn btn-sm btn-outline-warning" onclick="duplicateNews('${id}')">Duplicate</button>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteNews('${id}')">Delete</button>
+            </td>`;
 
         return `
-      <tr>
-        <td>${safe(id)}</td>
-        <td>${imgHtml}</td>
-        <td>${safe(title)}</td>
-        <td title="${safe(headline)}">${safe(headline.length > 60 ? headline.slice(0, 60) + "…" : headline)}</td>
-        <td>${safe(source)}</td>
-        <td>${safe(category)}</td>
-        <td>
-          <span class="badge ${isActive ? "bg-success" : "bg-secondary"}">
-            ${isActive ? "Active" : "Inactive"}
-          </span>
-        </td>
-        <td>
-          <button class="btn btn-sm btn-outline-primary" onclick="editNews('${id}')">Edit</button>
-          <button class="btn btn-sm btn-outline-warning" onclick="duplicateNews('${id}')">Duplicate</button>
-          <button class="btn btn-sm btn-outline-danger" onclick="deleteNews('${id}')">Delete</button>
-        </td>
-      </tr>
-    `;
+          <tr>
+            <td>${safe(id)}</td>
+            <td>${imgHtml}</td>
+            <td>${safe(title)}</td>
+            <td title="${safe(headline)}">${safe(headline.length > 60 ? headline.slice(0, 60) + "…" : headline)}</td>
+            <td>${safe(source)}</td>
+            <td>${safe(category)}</td>
+            <td>
+              <span class="badge ${isActive ? "bg-success" : "bg-secondary"}">
+                ${isActive ? "Active" : "Inactive"}
+              </span>
+            </td>
+            ${actionsHtml}
+          </tr>`;
     }).join("");
-
-    setNewsPagingInfo();
-    updateNewsPagerButtons();
 }
+
 
 async function loadCategories() {
     // ✅ ưu tiên gọi search để lấy list active (tránh GET /api/Category trả format lạ)

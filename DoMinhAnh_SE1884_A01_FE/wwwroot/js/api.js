@@ -172,9 +172,11 @@ window.api = (() => {
     }
 
     return {
-        get:  (path)        => request(path, { method: "GET" }),
-        post: (path, body)  => request(path, { method: "POST",  body: (body instanceof FormData) ? body : JSON.stringify(body) }),
-        put:  (path, body)  => request(path, { method: "PUT",   body: (body instanceof FormData) ? body : JSON.stringify(body) }),
-        del:  (path)        => request(path, { method: "DELETE" })
+        get:        (path)        => request(path, { method: "GET" }),
+        post:       (path, body)  => request(path, { method: "POST",  body: (body instanceof FormData) ? body : JSON.stringify(body) }),
+        // ✅ postCached: POST nhưng LƯU kết quả vào localStorage và ĐỌC lại khi API lỗi
+        postCached: (path, body)  => request(path, { method: "POST",  body: JSON.stringify(body), enableCache: true }),
+        put:        (path, body)  => request(path, { method: "PUT",   body: (body instanceof FormData) ? body : JSON.stringify(body) }),
+        del:        (path)        => request(path, { method: "DELETE" })
     };
 })();
