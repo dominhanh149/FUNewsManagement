@@ -76,6 +76,11 @@ function openCreate() {
     document.getElementById("accountEmail").value = "";
     document.getElementById("accountRole").value = "1";
     document.getElementById("accountPassword").value = "";
+    
+    // Ẩn Old Password khi tạo mới
+    document.getElementById("groupOldPassword").style.display = "none";
+    document.getElementById("accountOldPassword").value = "";
+    document.getElementById("lblNewPassword").innerHTML = 'Password <span class="text-danger">*</span>';
 
     modal.show();
 }
@@ -96,6 +101,11 @@ window.editAccount = async function (id) {
     document.getElementById("accountRole").value = (a.accountRole ?? 1).toString();
     document.getElementById("accountPassword").value = ""; // không auto fill password
 
+    // Hiện Old Password khi edit
+    document.getElementById("groupOldPassword").style.display = "block";
+    document.getElementById("accountOldPassword").value = "";
+    document.getElementById("lblNewPassword").innerHTML = 'New Password <span class="text-muted">(leave blank to keep current)</span>';
+
     modal.show();
 }
 
@@ -105,6 +115,7 @@ async function saveAccount() {
     const email = document.getElementById("accountEmail").value.trim();
     const role = Number(document.getElementById("accountRole").value);
     const password = document.getElementById("accountPassword").value;
+    const oldPassword = document.getElementById("accountOldPassword").value;
 
     const msg = document.getElementById("modalMsg");
     msg.innerText = "";
@@ -117,6 +128,12 @@ async function saveAccount() {
         msg.innerText = "Password is required when creating.";
         return;
     }
+    
+    // Validate Old Password khi đang edit và có nhập password mới
+    if (id !== 0 && password && !oldPassword) {
+        msg.innerText = "Vui lòng nhập Mật khẩu cũ (Old Password) để đổi mật khẩu.";
+        return;
+    }
 
     // Field names must match SystemAccountSaveDto exactly (PascalCase)
     const body = {
@@ -124,7 +141,8 @@ async function saveAccount() {
         AccountName: name,
         AccountEmail: email,
         AccountRole: role,
-        AccountPassword: password ? password : null
+        AccountPassword: password ? password : null,
+        AccountOldPassword: oldPassword ? oldPassword : null
     };
 
     const btn = document.getElementById("btnSave");

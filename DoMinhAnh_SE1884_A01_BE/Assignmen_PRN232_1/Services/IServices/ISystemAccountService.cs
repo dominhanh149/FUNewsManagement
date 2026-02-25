@@ -14,5 +14,6 @@ namespace Assignmen_PRN232_1.Services.IServices
         Task<ApiResponse<bool>> DeleteAsync(short id);
 
         Task<ApiResponse<SystemAccountDto>> LoginAsync(SystemAccountLoginDto dto);
+        Task<ApiResponse<bool>> ChangePasswordAsync(ChangePasswordDto dto);
     }
 }

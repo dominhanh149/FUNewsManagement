@@ -73,9 +73,14 @@
                     </select>
                 </div>
 
+                <div class="mb-2" id="groupOldPassword" style="display: none;">
+                    <label class="form-label">Old Password <span class="text-danger">*</span></label>
+                    <input id="accountOldPassword" type="password" class="form-control" placeholder="Required to change password" />
+                </div>
+
                 <div class="mb-2">
-                    <label class="form-label">Password <span class="text-muted">(required when create)</span></label>
-                    <input id="accountPassword" type="password" class="form-control" />
+                    <label id="lblNewPassword" class="form-label">Password <span class="text-muted">(required when create)</span></label>
+                    <input id="accountPassword" type="password" class="form-control" placeholder="Leave blank to keep current" />
                 </div>
 
                 <div id="modalMsg" class="text-danger mt-2"></div>
@@ -89,5 +94,5 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/admin.accounts.js"></script>
+    <script src="~/js/admin.accounts.js?v=2"></script>
 }

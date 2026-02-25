@@ -93,6 +93,7 @@ namespace Assignmen_PRN232__.Dto
         [Required, EmailAddress]
         public string AccountEmail { get; set; } = null!;
 
+        public string? AccountOldPassword { get; set; }
         public string? AccountPassword { get; set; }
 
         public short AccountRole { get; set; }

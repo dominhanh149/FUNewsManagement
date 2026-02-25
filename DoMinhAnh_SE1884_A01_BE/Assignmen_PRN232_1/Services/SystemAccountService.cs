@@ -107,7 +107,14 @@ namespace Assignmen_PRN232_1.Services
                 existing.AccountRole = dto.AccountRole;
 
                 if (!string.IsNullOrWhiteSpace(dto.AccountPassword))
+                {
+                    // Require old password
+                    if (string.IsNullOrWhiteSpace(dto.AccountOldPassword) || existing.AccountPassword != dto.AccountOldPassword)
+                    {
+                        return ApiResponse<SystemAccountDto>.ErrorResponse("Mật khẩu cũ không đúng.");
+                    }
                     existing.AccountPassword = dto.AccountPassword;
+                }
 
                 await _repo.UpdateAsync(existing);
                 await _repo.SaveChangesAsync();
@@ -173,6 +180,27 @@ namespace Assignmen_PRN232_1.Services
                     .ErrorResponse("Invalid email or password.");
 
             return ApiResponse<SystemAccountDto>.SuccessResponse(MapToDto(acc));
+        }
+
+        public async Task<ApiResponse<bool>> ChangePasswordAsync(ChangePasswordDto dto)
+        {
+            var acc = await _repo.GetByIdAsync(dto.AccountId);
+            if (acc == null)
+                return ApiResponse<bool>.ErrorResponse("Không tìm thấy tài khoản.");
+
+            // Kiểm tra mật khẩu cũ
+            if (acc.AccountPassword != dto.CurrentPassword)
+                return ApiResponse<bool>.ErrorResponse("Mật khẩu cũ không đúng.");
+
+            // Cập nhật mật khẩu mới
+            acc.AccountPassword = dto.NewPassword;
+            await _repo.UpdateAsync(acc);
+            await _repo.SaveChangesAsync();
+
+            await _audit.LogAsync("ChangePassword", "SystemAccount", acc.AccountId.ToString(),
+                null, null, null, null);
+
+            return ApiResponse<bool>.SuccessResponse(true, "Đổi mật khẩu thành công.");
         }
 
         private static SystemAccountDto MapToDto(SystemAccount x)

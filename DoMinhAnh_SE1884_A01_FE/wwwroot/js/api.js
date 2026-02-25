@@ -124,6 +124,11 @@ window.api = (() => {
             return data;
 
         } catch (err) {
+            // Nếu là lỗi do API trả về (đã báo toast trong parseResponse), ném tiếp luôn
+            if (err.isApiError) {
+                throw err;
+            }
+
             // Network error / Offline (sau khi Polly đã retry hết lượt)
             if (enableCache && cacheKey) {
                 const cached = localStorage.getItem(cacheKey);
@@ -137,7 +142,7 @@ window.api = (() => {
                     } catch {}
                 }
             }
-            // Không có cache → báo lỗi rõ
+            // Không có cache → báo lỗi rõ kết nối
             if (typeof window.showToast === 'function')
                 window.showToast(`Lỗi kết nối: Không thể liên lạc với máy chủ. Vui lòng thử lại.`, 'error');
             throw err;
@@ -157,7 +162,10 @@ window.api = (() => {
             const msg = data.message || data.Message || "Request failed";
             if (typeof window.showToast === 'function')
                 window.showToast(msg, 'error');
-            throw new Error(msg);
+            
+            const err = new Error(msg);
+            err.isApiError = true;
+            throw err;
         }
 
         if (!res.ok && (!data || data.success === undefined)) {
@@ -165,7 +173,10 @@ window.api = (() => {
             // 5xx → lỗi máy chủ
             if (res.status >= 500 && typeof window.showToast === 'function')
                 window.showToast(`Lỗi máy chủ (${res.status}): ${msg}`, 'error');
-            throw new Error(msg);
+            
+            const err = new Error(msg);
+            err.isApiError = true;
+            throw err;
         }
 
         return data;

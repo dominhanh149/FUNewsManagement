@@ -108,4 +108,56 @@ public class AuthProxyController : ControllerBase
 
         return Ok(new { success = true, access_token = newAccess });
     }
+
+    public class ChangePasswordReq
+    {
+        public string CurrentPassword { get; set; } = "";
+        public string NewPassword { get; set; } = "";
+    }
+
+    /// <summary>
+    /// POST /fe-api/auth/change-password
+    /// Người dùng đang đăng nhập đổi mật khẩu của chính mình.
+    /// AccountId được lấy từ JWT claim trong session (không cần client gửi).
+    /// </summary>
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordReq req)
+    {
+        var token = HttpContext.Session.GetString("access_token");
+        if (string.IsNullOrWhiteSpace(token))
+            return Unauthorized(new { success = false, message = "Chưa đăng nhập." });
+
+        // Giải mã AccountId từ JWT claim
+        short accountId = 0;
+        try
+        {
+            var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+            var idClaim = jwtToken.Claims
+                .FirstOrDefault(c => c.Type == "nameid" || c.Type == System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (idClaim != null)
+                short.TryParse(idClaim.Value, out accountId);
+        }
+        catch
+        {
+            return BadRequest(new { success = false, message = "Token không hợp lệ." });
+        }
+
+        if (accountId == 0)
+            return BadRequest(new { success = false, message = "Không xác định được tài khoản từ token." });
+
+        var client = _http.CreateClient("CoreApi");
+        var payload = JsonSerializer.Serialize(new
+        {
+            AccountId = accountId,
+            CurrentPassword = req.CurrentPassword,
+            NewPassword = req.NewPassword
+        });
+
+        var res = await client.PostAsync("/api/SystemAccounts/change-password",
+            new StringContent(payload, Encoding.UTF8, "application/json"));
+
+        var json = await res.Content.ReadAsStringAsync();
+        return StatusCode((int)res.StatusCode, json);
+    }
 }

@@ -90,6 +90,18 @@ namespace Assignmen_PRN232_1.Controllers.Api
             return BadRequest(response);
         }
 
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ." });
+
+            var response = await _service.ChangePasswordAsync(dto);
+            if (response.Success) return Ok(response);
+            return BadRequest(response);
+        }
+
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] SystemAccountLoginDto dto)

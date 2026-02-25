@@ -137,4 +137,79 @@
 
     // expose to other scripts if needed
     window.funews = { applyNavbar };
+
+    // ── Change Password ───────────────────────────────────────────────────────
+    let _changePwdModal = null;
+
+    window.openChangePassword = function () {
+        if (!_changePwdModal) {
+            _changePwdModal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+        }
+        // Reset form
+        document.getElementById('cpOldPwd').value = '';
+        document.getElementById('cpNewPwd').value = '';
+        document.getElementById('cpConfirmPwd').value = '';
+        const msgEl = document.getElementById('changePwdMsg');
+        msgEl.className = 'alert d-none mb-2';
+        msgEl.innerText = '';
+        _changePwdModal.show();
+    };
+
+    window.changePassword = async function () {
+        const oldPwd     = document.getElementById('cpOldPwd').value.trim();
+        const newPwd     = document.getElementById('cpNewPwd').value.trim();
+        const confirmPwd = document.getElementById('cpConfirmPwd').value.trim();
+        const msgEl      = document.getElementById('changePwdMsg');
+        const btn        = document.getElementById('btnChangePwd');
+        const spinner    = document.getElementById('changePwdSpinner');
+
+        // Reset thông báo
+        msgEl.className = 'alert d-none mb-2';
+        msgEl.innerText = '';
+
+        // ── Validation ────────────────────────────────────────────────────────
+        if (!oldPwd || !newPwd || !confirmPwd) {
+            msgEl.className = 'alert alert-danger mb-2';
+            msgEl.innerText = 'Vui lòng điền đầy đủ tất cả các trường.';
+            return;
+        }
+        if (newPwd.length < 6) {
+            msgEl.className = 'alert alert-danger mb-2';
+            msgEl.innerText = 'Mật khẩu mới phải có ít nhất 6 ký tự.';
+            return;
+        }
+        if (newPwd !== confirmPwd) {
+            msgEl.className = 'alert alert-danger mb-2';
+            msgEl.innerText = 'Mật khẩu xác nhận không khớp.';
+            return;
+        }
+        if (oldPwd === newPwd) {
+            msgEl.className = 'alert alert-warning mb-2';
+            msgEl.innerText = 'Mật khẩu mới phải khác mật khẩu cũ.';
+            return;
+        }
+
+        // ── Gọi API ───────────────────────────────────────────────────────────
+        btn.disabled = true;
+        spinner.classList.remove('d-none');
+
+        try {
+            const res = await api.post('/fe-api/auth/change-password', {
+                CurrentPassword: oldPwd,
+                NewPassword: newPwd
+            });
+
+            const msg = res?.message || res?.Message || 'Đổi mật khẩu thành công.';
+            _changePwdModal?.hide();
+            showToast(`🔑 ${msg}`, 'success');
+
+        } catch (err) {
+            // Hiện lỗi inline trong modal (không đóng modal)
+            msgEl.className = 'alert alert-danger mb-2';
+            msgEl.innerText = err.message || 'Đổi mật khẩu thất bại.';
+        } finally {
+            btn.disabled = false;
+            spinner.classList.add('d-none');
+        }
+    };
 })();
